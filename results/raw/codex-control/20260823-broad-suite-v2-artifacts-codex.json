@@ -1,0 +1,129 @@
+{
+  "run_id": "20260823-broad-suite-v2-artifacts-codex",
+  "suite_id": "odsc-harness-suite-v1",
+  "model": "glm-5.2",
+  "telemetry": {
+    "backend": "disabled",
+    "reason": "Laminar content export was not explicitly allowed."
+  },
+  "harness_models": {
+    "codex": "gpt-5.5"
+  },
+  "provider_ledger": {
+    "enabled": false,
+    "proxy_url": null,
+    "schema": null
+  },
+  "agent_canvas_version": "1.15.0",
+  "agent_server_version": "1.42.1",
+  "created_at": "2026-08-23T15:24:55.208933-05:00",
+  "task_sha256": {
+    "p09": "06a235f15742253947615204a5106997f75be879b5bcc4bb7ad609fc564374fa",
+    "rate_limiter": "deb9d0da50c312aef9a37de58c6ad81b4992d03c95ef5f70ee414d77aab7a05a",
+    "artifactsbench_spread_plate": "a539601bdab070133743777b46e33861154bdb02715c5896a6d768e0963e1a79",
+    "durable_job_queue": "a7431a1b41ebe33e3551c23db8111a5f5511b9dfbe43d95e8f23299a796cc49f"
+  },
+  "verifier_sha256": {
+    "p09": "8c68027a4e9ff1194859e459595bed7e051b5d7adcc912950056215d05ca2ddd",
+    "rate_limiter": "1b43235f19e35b0b18737a133c129c924b996013cc8c13ed59d1f67170858e83",
+    "artifactsbench_spread_plate": "ab362337e57fbcc18f54507642ea566dc16606f7d1174f8211d857f90365a4c8",
+    "durable_job_queue": "a3dfeec730fe78fc083e832ceb13373886e08b27c259659acfac02680726eb1a"
+  },
+  "tasks": [
+    {
+      "task_id": "artifactsbench-spread-plate",
+      "prompt": "# Virtual Spread Plate Lab\n\nBuild a polished, self-contained web application that demonstrates the spread plate technique for a biology class. This is a greenfield artifact task adapted from ArtifactsBench task 231.\n\nThe lab must show these materials and pieces of equipment:\n\n- a test tube with yeast culture broth\n- a cotton plug\n- solid agar culture medium in a plate\n- an inoculation loop\n- an alcohol lamp with a clear flammable-material warning\n- a clean bench or sterile work area\n\nThe objects should look recognizable, use colors that resemble the real objects, appear on both sides of the work area, and be movable. Use original CSS, HTML, SVG, or canvas artwork. Do not use remote assets, external libraries, CDNs, or network requests. The finished app must run by opening or statically serving `index.html`.\n\n## Learning flow\n\nGuide the learner through this scientifically valid sequence:\n\n1. Sterilize the inoculation loop with the alcohol lamp.\n2. Cool the loop in the sterile area.\n3. Sample the yeast culture.\n4. Inoculate the agar plate.\n5. Spread the sample across the plate.\n6. Incubate and show a completed result.\n\nPrevent impossible or unsafe actions. An invalid action must leave the current step unchanged and provide friendly, visible feedback that explains what to do next. The learner must be able to reset the experiment and start again. The page should tolerate repeated clicks and remain usable on a phone-sized viewport.\n\nMake the experience interesting enough to demonstrate in a workshop. Add at least one useful educational enhancement, such as time-lapse growth, a microscope view, a contamination indicator, a short quiz, or an explanation of why each step matters.\n\n## Behavior contract\n\nThe instructor-owned checker uses this small public contract so the visual design remains open-ended.\n\nExpose this object after the page loads:\n\n```javascript\nwindow.spreadPlateLab = {\n  getState(),\n  perform(action),\n  reset()\n}\n```\n\n`getState()` must return an object with:\n\n- `step`: one of `sterilize`, `cool`, `sample`, `inoculate`, `spread`, `incubate`, or `complete`\n- `completed`: a boolean\n- `history`: an array of successfully completed action names\n\n`perform(action)` must accept `sterilize`, `cool`, `sample`, `inoculate`, `spread`, and `incubate`. It must return an object containing an `ok` boolean and a human-readable `message`. It may update the page synchronously or return a Promise. Calling an action out of order must return `ok: false` without advancing the step.\n\n`reset()` must restore the initial state.\n\nAdd these stable DOM markers:\n\n- `data-testid=\"lab-root\"` on the main application, with its current step in `data-step`\n- `data-testid=\"equipment-yeast-broth\"`\n- `data-testid=\"equipment-cotton-plug\"`\n- `data-testid=\"equipment-agar-plate\"`\n- `data-testid=\"equipment-inoculation-loop\"`\n- `data-testid=\"equipment-alcohol-lamp\"`\n- `data-testid=\"equipment-clean-bench\"`\n- `data-testid=\"step-instruction\"` for the current instruction\n- `data-testid=\"feedback\"` for action feedback\n- `data-testid=\"progress\"` for visible progress\n- one visible interactive element with `data-action` for each procedure action\n- one visible interactive element with `data-action=\"reset\"`\n\nEvery equipment marker must be draggable through native drag behavior or pointer interactions. Set `draggable=\"true\"` on each marked equipment element even if you also support pointer or touch dragging.\n\n## Completion expectations\n\nBuild the complete experience, not a wireframe. Keep the code organized and readable. Include a short `README.md` explaining how to run the page and summarizing the interaction design. Before finishing, serve the app locally, exercise the full sequence and at least one invalid action, inspect the phone layout, and check the browser console for errors.\n\n\nDo not modify tests. Work only inside the current repository. Before finishing, run the relevant tests or behavioral checks and inspect the final git status and diff. Report files changed, checks run, and any remaining uncertainty.",
+      "harnesses": {
+        "codex": {
+          "conversation_id": "redacted",
+          "conversation_url": null,
+          "execution_status": "finished",
+          "workspace": "<local-workspace>",
+          "baseline_tree": "4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+          "verification": {
+            "first_pass": true,
+            "final_pass": true,
+            "repair_rounds": 0,
+            "output": "PASS: spread plate lab behavior contract satisfied\n"
+          },
+          "attempt_timing": [
+            {
+              "phase": "primary",
+              "submitted_at": "2026-08-23T15:24:55.284896-05:00",
+              "terminal_at": "2026-08-23T15:30:40.242641-05:00"
+            }
+          ],
+          "trace": {
+            "event_count": 39,
+            "started_at": "2026-08-23T15:24:55.504119",
+            "finished_at": "2026-08-23T15:30:40.157577",
+            "elapsed_seconds": 344.653,
+            "terminal_status": "finished",
+            "tool_calls": 13,
+            "models": [
+              "gpt-5.5"
+            ],
+            "visible_system_prompt_chars": 139,
+            "usage": {
+              "prompt_tokens": 665,
+              "completion_tokens": 464,
+              "cache_read_tokens": 44416,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 90,
+              "accounted_total_tokens": 45545,
+              "source": "agent-server-native-metrics"
+            },
+            "native_metrics": {
+              "usage_id": "default",
+              "metrics": {
+                "model_name": "gpt-5.5",
+                "accumulated_cost": 0.017245,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "gpt-5.5",
+                  "prompt_tokens": 665,
+                  "completion_tokens": 464,
+                  "cache_read_tokens": 44416,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 90,
+                  "context_window": 258400,
+                  "per_turn_token": 1129,
+                  "response_id": ""
+                }
+              },
+              "all_usage_to_metrics": {
+                "default": {
+                  "model_name": "gpt-5.5",
+                  "accumulated_cost": 0.017245,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "gpt-5.5",
+                    "prompt_tokens": 665,
+                    "completion_tokens": 464,
+                    "cache_read_tokens": 44416,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 90,
+                    "context_window": 258400,
+                    "per_turn_token": 1129,
+                    "response_id": ""
+                  }
+                }
+              }
+            }
+          },
+          "diff": {
+            "changed_files": [
+              "?? README.md",
+              "?? index.html"
+            ],
+            "additions": 999,
+            "deletions": 0
+          }
+        }
+      }
+    }
+  ],
+  "laminar": {
+    "status": "disabled"
+  }
+}
