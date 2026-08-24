@@ -9,6 +9,7 @@ skipped so an interrupted matrix can resume without repeating completed cells.
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -34,6 +35,25 @@ MATRIX = (
 )
 
 
+def is_completed_result(path: Path, harness: str) -> bool:
+    """Only skip an artifact that contains a finished, verified harness cell.
+
+    ``run_suite.py`` creates its JSON envelope before launching the conversation.
+    An interrupted controller can therefore leave an empty envelope behind;
+    treating it as complete loses a paid run or silently skips a cell.
+    """
+    if not path.exists():
+        return False
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        cell = payload["tasks"][0]["harnesses"][harness]
+    except (IndexError, KeyError, TypeError, json.JSONDecodeError):
+        return False
+    return cell.get("execution_status") == "finished" and isinstance(
+        cell.get("verification", {}).get("first_pass"), bool
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default="20260824")
@@ -50,7 +70,7 @@ def main() -> None:
     for model, harness in MATRIX:
         run_id = f"current-main-long-{model}-{harness}-{args.date}"
         result = RESULTS / f"{run_id}.json"
-        if result.exists() and not args.force:
+        if is_completed_result(result, harness) and not args.force:
             print(f"SKIP {run_id}: {result} exists", flush=True)
             continue
         command = [
