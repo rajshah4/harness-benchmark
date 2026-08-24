@@ -37,6 +37,7 @@ The long project shows why call count alone is not enough. Pi made fewer calls t
 ## What is here
 
 - [`METHODOLOGY.md`](METHODOLOGY.md): experimental controls, token definitions, limitations, and reproduction procedure.
+- [`REPLICATION-CAVEATS.md`](REPLICATION-CAVEATS.md): practical failure modes and checks for reproducing the benchmark.
 - [`benchmark/`](benchmark/): prompts, starting repositories, and external verifiers.
 - [`runner/`](runner/): Agent Canvas runner, provider-boundary ledger, calibration checks, and tests.
 - [`results/short-suite.md`](results/short-suite.md): all eight short tasks.
