@@ -1,6 +1,6 @@
 import json
 
-from usage_ledger import normalize_usage, summarize
+from usage_ledger import cache_observation, normalize_usage, summarize
 
 
 def test_normalizes_cached_input_without_double_counting():
@@ -30,10 +30,51 @@ def test_missing_usage_fails_publishability(tmp_path):
     assert result["errors"] == [{"row": 1, "error": "missing raw provider usage"}]
 
 
+def test_distinguishes_missing_cache_field_from_reported_zero():
+    assert cache_observation({"prompt_tokens_details": {"cached_tokens": 0}}) == {
+        "reported": True,
+        "tokens": 0,
+        "field": "prompt_tokens_details.cached_tokens",
+    }
+    assert cache_observation({"prompt_tokens": 10}) == {
+        "reported": False,
+        "tokens": None,
+        "field": None,
+    }
+
+
+def test_normalizes_anthropic_cache_usage_without_losing_categories():
+    usage = {
+        "input_tokens": 100,
+        "cache_creation_input_tokens": 20,
+        "cache_read_input_tokens": 300,
+        "output_tokens": 40,
+    }
+    assert normalize_usage(usage) == {
+        "input_tokens": 420,
+        "fresh_input_tokens": 100,
+        "cache_read_input_tokens": 300,
+        "cache_write_input_tokens": 20,
+        "output_tokens": 40,
+        "reasoning_tokens": None,
+        "provider_total_tokens": None,
+    }
+    assert cache_observation(usage) == {
+        "reported": True,
+        "tokens": 300,
+        "field": "cache_read_input_tokens",
+    }
+
+
 def test_duplicate_response_id_fails_publishability(tmp_path):
     record = {
         "provider_response_id": "r1",
-        "raw_usage": {"prompt_tokens": 10, "completion_tokens": 2, "total_tokens": 12},
+        "raw_usage": {
+            "prompt_tokens": 10,
+            "completion_tokens": 2,
+            "total_tokens": 12,
+            "prompt_tokens_details": {"cached_tokens": 0},
+        },
     }
     ledger = tmp_path / "ledger.jsonl"
     ledger.write_text("\n".join([json.dumps(record), json.dumps(record)]) + "\n")

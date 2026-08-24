@@ -14,12 +14,11 @@ from run_suite import (
     HARNESS_MODELS,
     KEY_FILE,
     PROFILE_NAMES,
-    SECRET_LOOKUP_URL,
     all_events,
     event_metrics,
+    llm_secret_for_harness,
     request_json,
     resolve_profile_ids,
-    secret_source,
     set_ledger_context,
     wait_for_terminal,
 )
@@ -53,7 +52,7 @@ def create_conversation(profile_id: str, harness: str, workspace: Path) -> str:
             "autotitle": False,
             "worktree": False,
             "secrets": {
-                "LLM_API_KEY": secret_source("LLM_API_KEY", SECRET_LOOKUP_URL, key)
+                "LLM_API_KEY": llm_secret_for_harness(harness, key)
             },
         },
     )
@@ -76,7 +75,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", default=datetime.now().strftime("%Y%m%d-%H%M%S"))
     parser.add_argument("--ledger-proxy-url", required=True)
-    parser.add_argument("--harness", action="append", choices=("openhands", "pi", "opencode"))
+    parser.add_argument(
+        "--harness", action="append",
+        choices=("openhands", "openhands-sonnet", "pi", "opencode")
+    )
     args = parser.parse_args()
     harnesses = tuple(args.harness or ("openhands", "pi", "opencode"))
     profiles = resolve_profile_ids(harnesses)

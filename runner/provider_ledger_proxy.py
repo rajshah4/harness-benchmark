@@ -6,7 +6,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import threading
+import time
 import uuid
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -15,6 +17,8 @@ from typing import Any
 from urllib.error import HTTPError
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
+
+from usage_ledger import cache_observation
 
 
 def now() -> str:
@@ -36,9 +40,19 @@ def response_usage_metadata(body: bytes, content_type: str) -> tuple[str | None,
                 event = json.loads(payload)
             except json.JSONDecodeError:
                 continue
-            if isinstance(event, dict) and isinstance(event.get("usage"), dict):
-                usage = event["usage"]
-                response_id = event.get("id") if isinstance(event.get("id"), str) else None
+            if not isinstance(event, dict):
+                continue
+            event_usage = event.get("usage")
+            message = event.get("message")
+            if not isinstance(event_usage, dict) and isinstance(message, dict):
+                event_usage = message.get("usage")
+            if isinstance(event_usage, dict):
+                usage = {**(usage or {}), **event_usage}
+            candidate_id = event.get("id")
+            if not isinstance(candidate_id, str) and isinstance(message, dict):
+                candidate_id = message.get("id")
+            if isinstance(candidate_id, str):
+                response_id = candidate_id
         return response_id, usage
     try:
         payload = json.loads(body)
@@ -55,6 +69,64 @@ def usage_from_response(body: bytes, content_type: str) -> dict[str, Any] | None
     return response_usage_metadata(body, content_type)[1]
 
 
+def response_error_metadata(body: bytes, content_type: str) -> dict[str, Any] | None:
+    """Detect provider errors without retaining messages or response content.
+
+    Streaming APIs can return HTTP 200 and then emit an error event. Only short,
+    machine-readable classifications are retained; free-form error messages are
+    deliberately ignored.
+    """
+    categorical = re.compile(r"^[A-Za-z0-9_.:/-]{1,128}$")
+
+    def safe_category(value: Any) -> str | None:
+        return value if isinstance(value, str) and categorical.fullmatch(value) else None
+
+    def from_payload(payload: Any, *, source: str, event_name: str | None = None) -> dict[str, Any] | None:
+        if not isinstance(payload, dict):
+            return None
+        error = payload.get("error")
+        is_error = payload.get("type") == "error" or isinstance(error, dict) or event_name == "error"
+        if not is_error:
+            return None
+        error_object = error if isinstance(error, dict) else {}
+        metadata = {
+            "detected": True,
+            "source": source,
+            "event_type": safe_category(payload.get("type")) or safe_category(event_name),
+            "error_type": safe_category(error_object.get("type")),
+            "error_code": safe_category(error_object.get("code")),
+        }
+        return {key: value for key, value in metadata.items() if value is not None}
+
+    if "text/event-stream" in content_type:
+        event_name = None
+        for line in body.decode("utf-8", errors="replace").splitlines():
+            if line.startswith("event:"):
+                event_name = line.removeprefix("event:").strip()
+                continue
+            if not line.startswith("data:"):
+                continue
+            raw_payload = line.removeprefix("data:").strip()
+            if not raw_payload or raw_payload == "[DONE]":
+                continue
+            try:
+                payload = json.loads(raw_payload)
+            except json.JSONDecodeError:
+                if event_name == "error":
+                    return {"detected": True, "source": "sse", "event_type": "error"}
+                continue
+            metadata = from_payload(payload, source="sse", event_name=event_name)
+            if metadata:
+                return metadata
+        return None
+
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        return None
+    return from_payload(payload, source="json")
+
+
 def request_metadata(body: bytes) -> dict[str, Any]:
     """Return safe request metadata without retaining prompt or tool content."""
     try:
@@ -63,16 +135,76 @@ def request_metadata(body: bytes) -> dict[str, Any]:
         return {"request_json": False}
     if not isinstance(payload, dict):
         return {"request_json": False}
+    messages = payload.get("messages", [])
+    tools = payload.get("tools", [])
+
+    def encoded(value: Any) -> bytes:
+        return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+    def fingerprint(value: Any) -> str:
+        return hashlib.sha256(encoded(value)).hexdigest()
+
+    message_shape = []
+    if isinstance(messages, list):
+        for message in messages:
+            if not isinstance(message, dict):
+                message_shape.append({"type": type(message).__name__})
+                continue
+            content = message.get("content")
+            message_shape.append({
+                "role": message.get("role"),
+                "content_bytes": len(encoded(content)),
+                "has_tool_calls": bool(message.get("tool_calls")),
+                "tool_call_count": len(message.get("tool_calls", []))
+                if isinstance(message.get("tool_calls"), list) else 0,
+            })
+    system_messages = [
+        message for message in messages
+        if isinstance(message, dict) and message.get("role") in {"system", "developer"}
+    ] if isinstance(messages, list) else []
+    stable_prefix = messages[:-1] if isinstance(messages, list) and messages else []
+    parameters = {
+        key: payload[key]
+        for key in (
+            "frequency_penalty", "max_completion_tokens", "max_tokens", "n",
+            "parallel_tool_calls", "presence_penalty", "reasoning_effort", "seed",
+            "stop", "temperature", "tool_choice", "top_p",
+        )
+        if key in payload
+    }
     return {
         "request_json": True,
         "model": payload.get("model"),
         "stream": payload.get("stream", False),
-        "message_count": len(payload.get("messages", []))
-        if isinstance(payload.get("messages"), list)
-        else None,
-        "tool_count": len(payload.get("tools", []))
-        if isinstance(payload.get("tools"), list)
-        else None,
+        "message_count": len(messages) if isinstance(messages, list) else None,
+        "tool_count": len(tools) if isinstance(tools, list) else None,
+        "request_bytes": len(body),
+        "messages_bytes": len(encoded(messages)),
+        "tools_bytes": len(encoded(tools)),
+        "message_shape": message_shape,
+        "messages_sha256": fingerprint(messages),
+        "stable_prefix_sha256": fingerprint(stable_prefix),
+        "stable_prefix_bytes": len(encoded(stable_prefix)),
+        "system_sha256": fingerprint(system_messages),
+        "system_bytes": len(encoded(system_messages)),
+        "tools_sha256": fingerprint(tools),
+        "parameters": parameters,
+    }
+
+
+def safe_response_metadata(headers: dict[str, str], body: bytes, elapsed_ms: float) -> dict[str, Any]:
+    """Retain operational cache evidence without credentials or response content."""
+    allowed = {
+        "age", "cache-control", "cf-cache-status", "x-cache", "x-cache-hits",
+        "x-request-id", "x-ratelimit-limit-tokens", "x-ratelimit-remaining-tokens",
+    }
+    return {
+        "elapsed_ms": round(elapsed_ms, 3),
+        "response_bytes": len(body),
+        "body_sha256": hashlib.sha256(body).hexdigest(),
+        "headers": {
+            key.lower(): value for key, value in headers.items() if key.lower() in allowed
+        },
     }
 
 
@@ -160,7 +292,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
             self._json(404, {"detail": "expected /v1/<harness>/<endpoint>"})
             return
         harness = parts[1]
-        upstream_path = "/v1/" + "/".join(parts[2:])
+        endpoint_parts = parts[2:]
+        # Anthropic-compatible clients may append their own /v1/messages to a
+        # routed base URL that already contains /v1/<harness>.
+        if endpoint_parts and endpoint_parts[0] == "v1":
+            endpoint_parts = endpoint_parts[1:]
+        upstream_path = "/v1/" + "/".join(endpoint_parts)
         if parsed.query:
             upstream_path += "?" + parsed.query
         body = self._read_body()
@@ -177,6 +314,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         response_headers: dict[str, str] = {}
         response_status = 502
         error_type = None
+        started = time.monotonic()
         try:
             request = Request(upstream_url, data=body, method="POST", headers=headers)
             with urlopen(request, timeout=self.server.timeout_seconds) as response:
@@ -195,8 +333,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
         content_type = response_headers.get("Content-Type", "")
         provider_response_id, raw_usage = response_usage_metadata(response_body, content_type)
+        provider_error = response_error_metadata(response_body, content_type)
+        if provider_error and error_type is None:
+            error_type = "ProviderStreamError" if provider_error["source"] == "sse" else "ProviderResponseError"
         record = {
-            "schema_version": 1,
+            "schema_version": 3,
             "recorded_at": now(),
             "request_id": request_id,
             "provider_response_id": provider_response_id,
@@ -207,8 +348,13 @@ class ProxyHandler(BaseHTTPRequestHandler):
             "request": metadata,
             "response_status": response_status,
             "response_content_type": content_type,
+            "response": safe_response_metadata(
+                response_headers, response_body, (time.monotonic() - started) * 1000
+            ),
             "raw_usage": raw_usage,
+            "cache_observation": cache_observation(raw_usage),
             "error_type": error_type,
+            "provider_error": provider_error,
         }
         self.server.ledger.append(record)
 

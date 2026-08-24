@@ -11,6 +11,25 @@ from typing import Any
 
 def normalize_usage(usage: dict[str, Any]) -> dict[str, int | None]:
     """Preserve provider totals while exposing non-overlapping token fields."""
+    if "input_tokens" in usage and (
+        "cache_read_input_tokens" in usage or "cache_creation_input_tokens" in usage
+    ):
+        fresh = usage.get("input_tokens")
+        cached = usage.get("cache_read_input_tokens")
+        cache_write = usage.get("cache_creation_input_tokens")
+        input_total = None
+        if fresh is not None:
+            input_total = fresh + (cached or 0) + (cache_write or 0)
+        output = usage.get("output_tokens")
+        return {
+            "input_tokens": input_total,
+            "fresh_input_tokens": fresh,
+            "cache_read_input_tokens": cached,
+            "cache_write_input_tokens": cache_write,
+            "output_tokens": output,
+            "reasoning_tokens": None,
+            "provider_total_tokens": usage.get("total_tokens"),
+        }
     input_total = usage.get("prompt_tokens", usage.get("input_tokens"))
     output = usage.get("completion_tokens", usage.get("output_tokens"))
     total = usage.get("total_tokens")
@@ -37,6 +56,27 @@ def normalize_usage(usage: dict[str, Any]) -> dict[str, int | None]:
     }
 
 
+def cache_observation(usage: dict[str, Any] | None) -> dict[str, Any]:
+    """Describe whether cache telemetry was reported, not merely its value."""
+    if not isinstance(usage, dict):
+        return {"reported": False, "tokens": None, "field": None}
+    for details_key in ("prompt_tokens_details", "input_tokens_details"):
+        details = usage.get(details_key)
+        if isinstance(details, dict) and "cached_tokens" in details:
+            return {
+                "reported": True,
+                "tokens": details["cached_tokens"],
+                "field": f"{details_key}.cached_tokens",
+            }
+    if "cache_read_input_tokens" in usage:
+        return {
+            "reported": True,
+            "tokens": usage["cache_read_input_tokens"],
+            "field": "cache_read_input_tokens",
+        }
+    return {"reported": False, "tokens": None, "field": None}
+
+
 def validate_record(record: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     usage = record.get("raw_usage")
@@ -47,12 +87,19 @@ def validate_record(record: dict[str, Any]) -> list[str]:
         errors.append("missing provider input tokens")
     if normalized["output_tokens"] is None:
         errors.append("missing provider output tokens")
-    if normalized["provider_total_tokens"] is None:
+    anthropic_schema = "input_tokens" in usage and "output_tokens" in usage
+    if normalized["provider_total_tokens"] is None and not anthropic_schema:
         errors.append("missing provider total tokens")
+    if not cache_observation(usage)["reported"]:
+        errors.append("missing provider cache-read field")
     expected = None
     if normalized["input_tokens"] is not None and normalized["output_tokens"] is not None:
         expected = normalized["input_tokens"] + normalized["output_tokens"]
-    if expected is not None and normalized["provider_total_tokens"] != expected:
+    if (
+        expected is not None
+        and normalized["provider_total_tokens"] is not None
+        and normalized["provider_total_tokens"] != expected
+    ):
         errors.append(
             "provider total does not equal input plus output; preserve raw fields and investigate"
         )
@@ -70,6 +117,8 @@ def summarize(path: Path) -> dict[str, Any]:
         "output_tokens": 0,
         "provider_total_tokens": 0,
     }
+    cache_reported_calls = 0
+    positive_cache_read_calls = 0
     grouped: dict[str, dict[str, int]] = {}
     for index, record in enumerate(records, 1):
         response_id = record.get("provider_response_id")
@@ -84,6 +133,9 @@ def summarize(path: Path) -> dict[str, Any]:
             errors.append({"row": index, "error": error})
         if not record_errors:
             normalized = normalize_usage(record["raw_usage"])
+            observation = cache_observation(record["raw_usage"])
+            cache_reported_calls += int(observation["reported"])
+            positive_cache_read_calls += int((observation["tokens"] or 0) > 0)
             for field in totals:
                 totals[field] += int(normalized[field] or 0)
             context = record.get("context") or {}
@@ -102,6 +154,16 @@ def summarize(path: Path) -> dict[str, Any]:
         "publishable": bool(records) and not errors,
         "model_call_count": len(records),
         "totals": totals,
+        "cache_telemetry": {
+            "reported_calls": cache_reported_calls,
+            "missing_calls": len(records) - cache_reported_calls,
+            "positive_cache_read_calls": positive_cache_read_calls,
+            "cache_read_rate": (
+                totals["cache_read_input_tokens"] / totals["input_tokens"]
+                if totals["input_tokens"]
+                else None
+            ),
+        },
         "by_context": grouped,
         "errors": errors,
     }

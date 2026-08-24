@@ -50,6 +50,7 @@ PROFILE_NAMES = {
     "pi": "ODSC-Pi-GLM52",
     "opencode": "ODSC-OpenCode-GLM52",
     "codex": "Codex",
+    "openhands-sonnet": "Sonnet",
 }
 DEFAULT_HARNESSES = ("openhands", "pi", "opencode")
 HARNESS_MODELS = {
@@ -57,6 +58,7 @@ HARNESS_MODELS = {
     "pi": "glm-5.2",
     "opencode": "glm-5.2",
     "codex": "gpt-5.5",
+    "openhands-sonnet": "openhands/claude-sonnet-4-5-20250929",
 }
 
 TERMINAL_STATUSES = {"finished", "error", "stopped"}
@@ -79,6 +81,10 @@ def secret_source(name: str, lookup_url: str, key: str) -> dict[str, object]:
         "url": lookup_url,
         "headers": {"X-Session-API-Key": key},
     }
+
+
+def llm_secret_for_harness(harness: str, key: str) -> dict[str, object]:
+    return secret_source("LLM_API_KEY", SECRET_LOOKUP_URL, key)
 
 
 def request_json(method: str, path: str, payload: dict | None = None) -> dict:
@@ -235,7 +241,7 @@ def launch(
         "autotitle": False,
         "worktree": False,
         "secrets": {
-            "LLM_API_KEY": secret_source("LLM_API_KEY", SECRET_LOOKUP_URL, key)
+            "LLM_API_KEY": llm_secret_for_harness(harness, key)
         },
         "observability_metadata": {
             "experiment": "odsc-harness-suite",
@@ -546,7 +552,7 @@ def event_metrics(events: list[dict], harness: str, workspace: Path) -> dict:
         ),
         "source": "agent-server-native-metrics",
     }
-    if harness == "openhands":
+    if harness.startswith("openhands"):
         tool_calls = sum(event.get("kind") == "ActionEvent" for event in events)
     else:
         tool_calls = len(

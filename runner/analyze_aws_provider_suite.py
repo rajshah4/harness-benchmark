@@ -9,6 +9,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+from usage_ledger import cache_observation, normalize_usage
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -28,6 +30,9 @@ def blank_metrics() -> dict[str, Any]:
         "provider_total_tokens": 0,
         "cost": 0.0,
         "provider_errors": 0,
+        "cache_reported_calls": 0,
+        "cache_missing_calls": 0,
+        "positive_cache_read_calls": 0,
         "tool_counts": set(),
     }
 
@@ -50,14 +55,20 @@ def main() -> None:
                 cells[key]["provider_errors"] += 1
                 cells[key]["tool_counts"].add(record["request"]["tool_count"])
                 continue
-            cached = usage.get("prompt_tokens_details", {}).get("cached_tokens", 0)
+            observation = cache_observation(usage)
+            cached = observation["tokens"]
+            normalized = normalize_usage(usage)
             cell = cells[key]
             cell["model_calls"] += 1
-            cell["input_tokens"] += usage["prompt_tokens"]
-            cell["cache_read_input_tokens"] += cached
-            cell["fresh_input_tokens"] += usage["prompt_tokens"] - cached
-            cell["output_tokens"] += usage["completion_tokens"]
-            cell["provider_total_tokens"] += usage["total_tokens"]
+            cell["cache_reported_calls"] += int(observation["reported"])
+            cell["cache_missing_calls"] += int(not observation["reported"])
+            cell["positive_cache_read_calls"] += int((cached or 0) > 0)
+            cell["input_tokens"] += normalized["input_tokens"] or 0
+            if cached is not None:
+                cell["cache_read_input_tokens"] += cached
+                cell["fresh_input_tokens"] += normalized["fresh_input_tokens"] or 0
+            cell["output_tokens"] += normalized["output_tokens"] or 0
+            cell["provider_total_tokens"] += normalized["provider_total_tokens"] or 0
             cell["cost"] += usage.get("cost", 0.0)
             cell["tool_counts"].add(record["request"]["tool_count"])
 
@@ -83,6 +94,9 @@ def main() -> None:
             "provider_total_tokens",
             "cost",
             "provider_errors",
+            "cache_reported_calls",
+            "cache_missing_calls",
+            "positive_cache_read_calls",
         ):
             aggregate[field] += cell[field]
         aggregate["elapsed_seconds"] = aggregate.get("elapsed_seconds", 0) + cell[
@@ -102,13 +116,16 @@ def main() -> None:
         result["tool_counts"] = sorted(
             result["tool_counts"], key=lambda value: -1 if value is None else value
         )
-        if result["input_tokens"]:
+        if result["input_tokens"] and not result["cache_missing_calls"]:
             result["cache_read_rate"] = round(
                 result["cache_read_input_tokens"] / result["input_tokens"], 6
             )
             result["average_input_tokens_per_call"] = round(
                 result["input_tokens"] / result["model_calls"], 2
             )
+        elif result["cache_missing_calls"]:
+            result["cache_read_rate"] = None
+            result["fresh_input_tokens"] = None
         return result
 
     output = {

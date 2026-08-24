@@ -70,6 +70,18 @@ reconciliation sources. They are not allowed to overwrite the native record.
 Use a transparent provider proxy as the common ledger when adapter-native
 metrics have different schemas or cache semantics.
 
+For cache troubleshooting, each provider-ledger row also retains content-free
+request structure and fingerprints: request/message/tool byte sizes, message
+roles and sizes, hashes of the system instructions, tool schema, full message
+list, and stable prefix, model parameters, response latency and size, and an
+allowlist of cache and rate-limit response headers. These reveal prompt churn,
+tool-schema churn, compaction boundaries, missing telemetry, and true cache
+misses without storing prompts, tool output, credentials, or response text.
+The proxy also inspects HTTP 200 event streams for embedded provider errors.
+It records only a safe error type/code classification, never the streamed error
+message, and analyzers count that call as a provider error rather than a valid
+usage or cache observation.
+
 ## Controlled Comparison
 
 A harness-only comparison requires:

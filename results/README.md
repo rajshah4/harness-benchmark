@@ -6,4 +6,8 @@ The provider ledgers contain one content-free record per model response. They re
 
 Raw verifier scores are preserved even when later audits found an evaluator defect. Corrections are explained in the corresponding narrative report rather than silently changing the evidence.
 
+The [`spread-plate-repeat-trial.md`](spread-plate-repeat-trial.md) report adds a
+second OpenHands trial and separates transient provider stalls from additional
+agent-loop work.
+
 The [`traces/`](traces/) directory contains complete sanitized Canvas event streams for the accepted long-project runs. It omits deployment metadata and invalid attempts. See its README and manifest for the exact inclusion and redaction rules.
