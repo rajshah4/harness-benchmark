@@ -45,6 +45,7 @@ The long project shows why call count alone is not enough. Pi made fewer calls t
 - [`results/commit0-comparison.md`](results/commit0-comparison.md): why the public Commit0 benchmark can favor OpenHands while these experiments find higher OpenHands resource use.
 - [`results/codex-control.md`](results/codex-control.md): the available Codex measurements and why they are kept outside the same-model table.
 - [`results/raw/`](results/raw/): sanitized per-run records.
+- [`results/traces/`](results/traces/): full sanitized Agent Canvas event streams for the accepted long-project runs.
 - [`results/provider-ledgers/`](results/provider-ledgers/): provider-returned usage for every measured request.
 
 ## Measurement rule
@@ -71,4 +72,3 @@ You can run any benchmark against a coding agent without the full measurement st
 5. Record elapsed time and provider-returned usage.
 
 For a publishable comparison, follow all calibration and accounting gates in [`METHODOLOGY.md`](METHODOLOGY.md).
-
