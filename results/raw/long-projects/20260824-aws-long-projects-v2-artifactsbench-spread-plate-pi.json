@@ -1,0 +1,160 @@
+{
+  "run_id": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-pi",
+  "suite_id": "odsc-harness-suite-v1",
+  "model": "glm-5.2",
+  "telemetry": {
+    "backend": "laminar-otel",
+    "project_secret": "LAMINAR_API_KEY",
+    "trace_metadata": [
+      "experiment",
+      "run_id",
+      "task",
+      "harness",
+      "model"
+    ],
+    "acp_token_source": "internal-subprocess-llm-spans",
+    "transport": "http",
+    "trace_content": "prompts-responses-code-and-tools",
+    "explicit_content_export": true
+  },
+  "harness_models": {
+    "pi": "glm-5.2"
+  },
+  "provider_ledger": {
+    "enabled": true,
+    "proxy_url": "http://127.0.0.1:4010",
+    "schema": "provider_ledger_proxy/v1"
+  },
+  "agent_canvas_version": "1.15.0",
+  "agent_server_version": "1.42.1",
+  "created_at": "2026-08-24T02:46:57.348832+00:00",
+  "task_sha256": {
+    "p09": "06a235f15742253947615204a5106997f75be879b5bcc4bb7ad609fc564374fa",
+    "rate_limiter": "deb9d0da50c312aef9a37de58c6ad81b4992d03c95ef5f70ee414d77aab7a05a",
+    "artifactsbench_spread_plate": "a539601bdab070133743777b46e33861154bdb02715c5896a6d768e0963e1a79",
+    "durable_job_queue": "a7431a1b41ebe33e3551c23db8111a5f5511b9dfbe43d95e8f23299a796cc49f",
+    "incident_operations_center": "fdba426746439089676c0757c94ea1026aa52f91330e0d2eb0d67d4a71d2dca8"
+  },
+  "verifier_sha256": {
+    "p09": "8c68027a4e9ff1194859e459595bed7e051b5d7adcc912950056215d05ca2ddd",
+    "rate_limiter": "1b43235f19e35b0b18737a133c129c924b996013cc8c13ed59d1f67170858e83",
+    "artifactsbench_spread_plate": "ab362337e57fbcc18f54507642ea566dc16606f7d1174f8211d857f90365a4c8",
+    "durable_job_queue": "a3dfeec730fe78fc083e832ceb13373886e08b27c259659acfac02680726eb1a",
+    "incident_operations_center": "6c40786f6ae1ac591751bc4ecab92bf241c5ba3c1e28db870f991caedae5950d"
+  },
+  "tasks": [
+    {
+      "task_id": "artifactsbench-spread-plate",
+      "prompt": "# Virtual Spread Plate Lab\n\nBuild a polished, self-contained web application that demonstrates the spread plate technique for a biology class. This is a greenfield artifact task adapted from ArtifactsBench task 231.\n\nThe lab must show these materials and pieces of equipment:\n\n- a test tube with yeast culture broth\n- a cotton plug\n- solid agar culture medium in a plate\n- an inoculation loop\n- an alcohol lamp with a clear flammable-material warning\n- a clean bench or sterile work area\n\nThe objects should look recognizable, use colors that resemble the real objects, appear on both sides of the work area, and be movable. Use original CSS, HTML, SVG, or canvas artwork. Do not use remote assets, external libraries, CDNs, or network requests. The finished app must run by opening or statically serving `index.html`.\n\n## Learning flow\n\nGuide the learner through this scientifically valid sequence:\n\n1. Sterilize the inoculation loop with the alcohol lamp.\n2. Cool the loop in the sterile area.\n3. Sample the yeast culture.\n4. Inoculate the agar plate.\n5. Spread the sample across the plate.\n6. Incubate and show a completed result.\n\nPrevent impossible or unsafe actions. An invalid action must leave the current step unchanged and provide friendly, visible feedback that explains what to do next. The learner must be able to reset the experiment and start again. The page should tolerate repeated clicks and remain usable on a phone-sized viewport.\n\nMake the experience interesting enough to demonstrate in a workshop. Add at least one useful educational enhancement, such as time-lapse growth, a microscope view, a contamination indicator, a short quiz, or an explanation of why each step matters.\n\n## Behavior contract\n\nThe instructor-owned checker uses this small public contract so the visual design remains open-ended.\n\nExpose this object after the page loads:\n\n```javascript\nwindow.spreadPlateLab = {\n  getState(),\n  perform(action),\n  reset()\n}\n```\n\n`getState()` must return an object with:\n\n- `step`: one of `sterilize`, `cool`, `sample`, `inoculate`, `spread`, `incubate`, or `complete`\n- `completed`: a boolean\n- `history`: an array of successfully completed action names\n\n`perform(action)` must accept `sterilize`, `cool`, `sample`, `inoculate`, `spread`, and `incubate`. It must return an object containing an `ok` boolean and a human-readable `message`. It may update the page synchronously or return a Promise. Calling an action out of order must return `ok: false` without advancing the step.\n\n`reset()` must restore the initial state.\n\nAdd these stable DOM markers:\n\n- `data-testid=\"lab-root\"` on the main application, with its current step in `data-step`\n- `data-testid=\"equipment-yeast-broth\"`\n- `data-testid=\"equipment-cotton-plug\"`\n- `data-testid=\"equipment-agar-plate\"`\n- `data-testid=\"equipment-inoculation-loop\"`\n- `data-testid=\"equipment-alcohol-lamp\"`\n- `data-testid=\"equipment-clean-bench\"`\n- `data-testid=\"step-instruction\"` for the current instruction\n- `data-testid=\"feedback\"` for action feedback\n- `data-testid=\"progress\"` for visible progress\n- one visible interactive element with `data-action` for each procedure action\n- one visible interactive element with `data-action=\"reset\"`\n\nEvery equipment marker must be draggable through native drag behavior or pointer interactions. Set `draggable=\"true\"` on each marked equipment element even if you also support pointer or touch dragging.\n\n## Completion expectations\n\nBuild the complete experience, not a wireframe. Keep the code organized and readable. Include a short `README.md` explaining how to run the page and summarizing the interaction design. Before finishing, serve the app locally, exercise the full sequence and at least one invalid action, inspect the phone layout, and check the browser console for errors.\n\n\nDo not modify tests. Work only inside the current repository. Before finishing, run the relevant tests or behavioral checks and inspect the final git status and diff. Report files changed, checks run, and any remaining uncertainty.",
+      "harnesses": {
+        "pi": {
+          "conversation_id": "redacted",
+          "conversation_url": null,
+          "execution_status": "finished",
+          "workspace": "<local-workspace>",
+          "baseline_tree": "4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+          "verification": {
+            "first_pass": true,
+            "final_pass": true,
+            "repair_rounds": 0,
+            "output": "PASS: spread plate lab behavior contract satisfied\n"
+          },
+          "attempt_timing": [
+            {
+              "phase": "primary",
+              "submitted_at": "2026-08-24T02:46:57.372114+00:00",
+              "terminal_at": "2026-08-24T02:51:11.724115+00:00"
+            }
+          ],
+          "trace": {
+            "event_count": 42,
+            "started_at": "2026-08-24T02:46:57.398906",
+            "finished_at": "2026-08-24T02:51:06.877053",
+            "elapsed_seconds": 249.478,
+            "terminal_status": "finished",
+            "tool_calls": 15,
+            "models": [],
+            "visible_system_prompt_chars": 139,
+            "usage": {
+              "prompt_tokens": 21482,
+              "completion_tokens": 16379,
+              "cache_read_tokens": 197760,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 3580,
+              "accounted_total_tokens": 235621,
+              "assistant_turns": 16,
+              "telemetry_session_id": "01a031a9-fbe7-71fa-a8e0-78a19d4288a9",
+              "source": "<local-workspace>"
+            },
+            "native_metrics": {
+              "usage_id": "default",
+              "metrics": {
+                "model_name": "openhands/glm-5.2",
+                "accumulated_cost": 0.0,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "openhands/glm-5.2",
+                  "prompt_tokens": 0,
+                  "completion_tokens": 0,
+                  "cache_read_tokens": 0,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "context_window": 0,
+                  "per_turn_token": 0,
+                  "response_id": ""
+                }
+              },
+              "all_usage_to_metrics": {
+                "default": {
+                  "model_name": "openhands/glm-5.2",
+                  "accumulated_cost": 0.0,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/glm-5.2",
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 0,
+                    "context_window": 0,
+                    "per_turn_token": 0,
+                    "response_id": ""
+                  }
+                }
+              }
+            }
+          },
+          "diff": {
+            "changed_files": [
+              "?? README.md",
+              "?? index.html"
+            ],
+            "additions": 885,
+            "deletions": 0
+          },
+          "laminar_session_id": "01a031a9-fbe7-71fa-a8e0-78a19d4288a9"
+        }
+      }
+    }
+  ],
+  "laminar": {
+    "status": "complete",
+    "expected_sessions": 1,
+    "observed_sessions": 1,
+    "sessions": [
+      {
+        "session_id": "01a031a9-fbe7-71fa-a8e0-78a19d4288a9",
+        "trace_count": 1,
+        "input_tokens": 203812,
+        "output_tokens": 16379,
+        "total_tokens": 220191,
+        "cache_read_input_tokens": 197760,
+        "cache_creation_input_tokens": 0,
+        "reasoning_tokens": 3580,
+        "total_cost": 0.1082268,
+        "task": "artifactsbench-spread-plate",
+        "harness": "pi"
+      }
+    ]
+  }
+}

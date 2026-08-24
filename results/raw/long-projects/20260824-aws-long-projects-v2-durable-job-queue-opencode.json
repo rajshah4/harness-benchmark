@@ -1,0 +1,162 @@
+{
+  "run_id": "20260824-aws-long-projects-v2-durable-job-queue-opencode",
+  "suite_id": "odsc-harness-suite-v1",
+  "model": "glm-5.2",
+  "telemetry": {
+    "backend": "laminar-otel",
+    "project_secret": "LAMINAR_API_KEY",
+    "trace_metadata": [
+      "experiment",
+      "run_id",
+      "task",
+      "harness",
+      "model"
+    ],
+    "acp_token_source": "internal-subprocess-llm-spans",
+    "transport": "http",
+    "trace_content": "prompts-responses-code-and-tools",
+    "explicit_content_export": true
+  },
+  "harness_models": {
+    "opencode": "glm-5.2"
+  },
+  "provider_ledger": {
+    "enabled": true,
+    "proxy_url": "http://127.0.0.1:4010",
+    "schema": "provider_ledger_proxy/v1"
+  },
+  "agent_canvas_version": "1.15.0",
+  "agent_server_version": "1.42.1",
+  "created_at": "2026-08-24T03:07:54.348523+00:00",
+  "task_sha256": {
+    "p09": "06a235f15742253947615204a5106997f75be879b5bcc4bb7ad609fc564374fa",
+    "rate_limiter": "deb9d0da50c312aef9a37de58c6ad81b4992d03c95ef5f70ee414d77aab7a05a",
+    "artifactsbench_spread_plate": "a539601bdab070133743777b46e33861154bdb02715c5896a6d768e0963e1a79",
+    "durable_job_queue": "a7431a1b41ebe33e3551c23db8111a5f5511b9dfbe43d95e8f23299a796cc49f",
+    "incident_operations_center": "fdba426746439089676c0757c94ea1026aa52f91330e0d2eb0d67d4a71d2dca8"
+  },
+  "verifier_sha256": {
+    "p09": "8c68027a4e9ff1194859e459595bed7e051b5d7adcc912950056215d05ca2ddd",
+    "rate_limiter": "1b43235f19e35b0b18737a133c129c924b996013cc8c13ed59d1f67170858e83",
+    "artifactsbench_spread_plate": "ab362337e57fbcc18f54507642ea566dc16606f7d1174f8211d857f90365a4c8",
+    "durable_job_queue": "a3dfeec730fe78fc083e832ceb13373886e08b27c259659acfac02680726eb1a",
+    "incident_operations_center": "260b21a5cc7d24ec1ddd619aa3237ec354b4ef742cb110a086372e95ab4a7af9"
+  },
+  "tasks": [
+    {
+      "task_id": "durable-job-queue",
+      "prompt": "# Durable Background Jobs\n\nThe existing `jobboard` package can run small jobs in memory. Add a durable SQLite-backed execution path suitable for work that may outlive a process.\n\nPreserve the existing in-memory API and its tests. Do not add third-party runtime dependencies.\n\n## Required behavior\n\nImplement persistent jobs with these states:\n\n- `queued`\n- `running`\n- `succeeded`\n- `failed`\n- `cancelled`\n\nA job records its identifier, kind, JSON-compatible payload, state, attempt count, maximum attempts, optional result, optional error, creation and update timestamps, and the next time it is eligible to run.\n\nAdd `jobboard.sqlite_store.SQLiteJobStore`. Creating a store must initialize its database automatically. Separate store instances opened on the same file must observe the same data.\n\nThe store must support:\n\n- enqueueing a job, with an optional caller-supplied job ID\n- retrieving a job by ID\n- listing jobs, optionally filtered by state\n- atomically claiming the oldest eligible queued job\n- completing a running job\n- recording an execution failure and either scheduling a retry or marking the job permanently failed\n- cancelling a queued or running job\n- recovering jobs left in `running` after an interrupted process\n\nClaiming increments the attempt count. Concurrent workers using separate connections must never claim the same job. Completion or failure must not overwrite a job that was cancelled after it was claimed.\n\nAdd `jobboard.durable_runner.DurableJobRunner`. It accepts a store, a mapping of job kinds to handler callables, and injectable `clock` and `sleep` callables. A handler receives the job payload and returns a JSON-compatible result.\n\nThe runner must:\n\n- recover interrupted running jobs when it starts\n- run the next eligible job\n- save successful results\n- retry exceptions with exponential backoff using `backoff_base * 2 ** (attempts - 1)`\n- stop retrying when `max_attempts` is reached\n- expose `run_until_idle(max_jobs=None)` without sleeping until future retries become eligible\n- treat an unknown job kind as a normal execution failure\n\n## Public interface\n\nExpose these import paths:\n\n```python\nfrom jobboard.models import Job, JobState\nfrom jobboard.sqlite_store import SQLiteJobStore\nfrom jobboard.durable_runner import DurableJobRunner\n```\n\n`JobState` must be a string enum. `SQLiteJobStore` must provide:\n\n```python\nenqueue(kind, payload, max_attempts=3, job_id=None) -> Job\nget(job_id) -> Job | None\nlist(state=None) -> list[Job]\nclaim_next(now=None) -> Job | None\ncomplete(job_id, result) -> Job\nfail(job_id, error, retry_at=None) -> Job\ncancel(job_id) -> bool\nrecover_running() -> int\n```\n\n`DurableJobRunner` must provide:\n\n```python\nrun_next() -> Job | None\nrun_until_idle(max_jobs=None) -> list[Job]\n```\n\nUse numeric Unix timestamps. If `claim_next` receives no `now`, use the current time. Results, payloads, and errors must survive closing and reopening the database.\n\n## Command line interface\n\nExtend `python -m jobboard.cli` with these commands:\n\n```text\n--db PATH enqueue KIND JSON_PAYLOAD [--max-attempts N]\n--db PATH work [--max-jobs N]\n--db PATH status [--state STATE]\n--db PATH cancel JOB_ID\n```\n\nWrite one JSON value per output line. Include built-in `echo` and `sum` handlers so the CLI can demonstrate a complete durable workflow. The `sum` handler accepts `{\"numbers\": [...]}` and returns their sum.\n\nInvalid JSON, invalid states, and missing job IDs must produce a useful error and a nonzero exit status.\n\n## Completion expectations\n\nKeep persistence concerns out of the existing in-memory store. Add focused tests for the new behavior without modifying existing tests. Run the full test suite and exercise the CLI across separate processes. Inspect the final Git diff and report any remaining concurrency or durability uncertainty.\n\n\nDo not modify tests. Work only inside the current repository. Before finishing, run the relevant tests or behavioral checks and inspect the final git status and diff. Report files changed, checks run, and any remaining uncertainty.",
+      "harnesses": {
+        "opencode": {
+          "conversation_id": "redacted",
+          "conversation_url": null,
+          "execution_status": "finished",
+          "workspace": "<local-workspace>",
+          "baseline_tree": "228cf7fea463ffd94021d2119e3b14b2281c20c7",
+          "verification": {
+            "first_pass": true,
+            "final_pass": true,
+            "repair_rounds": 0,
+            "output": "PASS existing regression tests\nPASS persistence and listing\nPASS FIFO claim and attempt accounting\nPASS atomic concurrent claims\nPASS retry scheduling and exponential backoff\nPASS unknown handlers and terminal failure\nPASS cancellation wins over stale workers\nPASS interrupted-process recovery\nPASS bounded run until idle\nPASS cross-process CLI workflow\n\n10/10 checks passed\nPASS: durable queue contract satisfied\n"
+          },
+          "attempt_timing": [
+            {
+              "phase": "primary",
+              "submitted_at": "2026-08-24T03:07:54.375051+00:00",
+              "terminal_at": "2026-08-24T03:13:25.122903+00:00"
+            }
+          ],
+          "trace": {
+            "event_count": 92,
+            "started_at": "2026-08-24T03:07:54.399009",
+            "finished_at": "2026-08-24T03:13:22.987420",
+            "elapsed_seconds": 328.588,
+            "terminal_status": "finished",
+            "tool_calls": 40,
+            "models": [],
+            "visible_system_prompt_chars": 139,
+            "usage": {
+              "prompt_tokens": 40326,
+              "completion_tokens": 13826,
+              "cache_read_tokens": 857728,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 6078,
+              "accounted_total_tokens": 911880,
+              "telemetry_session_id": "ses_fce42c7bdffee5FpG5yTIfoGNU",
+              "source": "opencode-session-db:ses_fce42c7bdffee5FpG5yTIfoGNU"
+            },
+            "native_metrics": {
+              "usage_id": "default",
+              "metrics": {
+                "model_name": "openhands/glm-5.2",
+                "accumulated_cost": 0.0,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "openhands/glm-5.2",
+                  "prompt_tokens": 448,
+                  "completion_tokens": 610,
+                  "cache_read_tokens": 36224,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "context_window": 131072,
+                  "per_turn_token": 1058,
+                  "response_id": ""
+                }
+              },
+              "all_usage_to_metrics": {
+                "default": {
+                  "model_name": "openhands/glm-5.2",
+                  "accumulated_cost": 0.0,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/glm-5.2",
+                    "prompt_tokens": 448,
+                    "completion_tokens": 610,
+                    "cache_read_tokens": 36224,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 0,
+                    "context_window": 131072,
+                    "per_turn_token": 1058,
+                    "response_id": ""
+                  }
+                }
+              }
+            }
+          },
+          "diff": {
+            "changed_files": [
+              " M src/jobboard/__init__.py",
+              " M src/jobboard/cli.py",
+              "?? src/jobboard/durable_runner.py",
+              "?? src/jobboard/sqlite_store.py",
+              "?? tests/test_durable.py"
+            ],
+            "additions": 960,
+            "deletions": 17
+          },
+          "laminar_session_id": "ses_fce42c7bdffee5FpG5yTIfoGNU"
+        }
+      }
+    }
+  ],
+  "laminar": {
+    "status": "complete",
+    "expected_sessions": 1,
+    "observed_sessions": 1,
+    "sessions": [
+      {
+        "session_id": "ses_fce42c7bdffee5FpG5yTIfoGNU",
+        "trace_count": 1,
+        "input_tokens": 899849,
+        "output_tokens": 19922,
+        "total_tokens": 919771,
+        "cache_read_input_tokens": 857728,
+        "cache_creation_input_tokens": 0,
+        "reasoning_tokens": 0,
+        "total_cost": 0.26670811999999994,
+        "task": "durable-job-queue",
+        "harness": "opencode"
+      }
+    ]
+  }
+}

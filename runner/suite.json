@@ -1,0 +1,55 @@
+{
+  "suite_id": "odsc-harness-suite-v1",
+  "model": "glm-5.2",
+  "tasks": [
+    {
+      "id": "p09-task-01",
+      "label": "Tiny rename",
+      "shape": "single-file mechanical edit",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "p09-task-04",
+      "label": "CLI feature",
+      "shape": "small feature with behavioral contract",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "p09-task-06",
+      "label": "Pagination repair",
+      "shape": "test-driven bug fix",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "p09-task-07",
+      "label": "Report refactor",
+      "shape": "multi-file refactor with structural acceptance criteria",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "p09-task-08",
+      "label": "Async race",
+      "shape": "concurrency repair with repeated tests and timing bound",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "p09-task-09",
+      "label": "Security review",
+      "shape": "analysis and written recommendations",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "p09-task-10",
+      "label": "Concurrent cache",
+      "shape": "long-horizon implementation with concurrency and recovery",
+      "source": "p09-toy-repo"
+    },
+    {
+      "id": "task08-rate-limiter",
+      "label": "Rate limiter",
+      "shape": "greenfield algorithm and state management",
+      "source": "empty-repo"
+    }
+  ]
+}
+

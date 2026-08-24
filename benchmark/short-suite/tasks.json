@@ -1,0 +1,82 @@
+[
+  {
+    "id": "p09-task-01",
+    "prompt": "Rename the local variable `raw_items` to `source_items` in `toyapp/pagination.py`. Keep behavior unchanged and do not edit unrelated files.",
+    "difficulty": "trivial",
+    "tags": ["rename", "single-file", "routine"],
+    "paths": ["toyapp/pagination.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-01 --repo {repo}"
+  },
+  {
+    "id": "p09-task-02",
+    "prompt": "Write clear docstrings for `parse_date`, `parse_date_range`, and `normalize_timezone` in `toyapp/dates.py`. Do not change function behavior.",
+    "difficulty": "trivial",
+    "tags": ["docs", "single-file", "routine"],
+    "paths": ["toyapp/dates.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-02 --repo {repo}"
+  },
+  {
+    "id": "p09-task-03",
+    "prompt": "Fix the wrong expected value in `tests/test_cli_assertion.py`. The implementation is correct; the test assertion is wrong.",
+    "difficulty": "trivial",
+    "tags": ["test-fix", "single-file", "routine"],
+    "paths": ["tests/test_cli_assertion.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-03 --repo {repo}"
+  },
+  {
+    "id": "p09-task-04",
+    "prompt": "Add a `--verbose` flag to the CLI in `toyapp/cli.py`. When passed, the command should print a line containing `verbose` before the normal greeting.",
+    "difficulty": "easy",
+    "tags": ["cli", "feature", "routine"],
+    "paths": ["toyapp/cli.py", "tests/test_cli.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-04 --repo {repo}"
+  },
+  {
+    "id": "p09-task-05",
+    "prompt": "Write unit tests for the date parsing utility in `tests/test_dates.py`. Cover ISO dates, slash dates, invalid dates, date ranges, and timezone normalization.",
+    "difficulty": "easy",
+    "tags": ["tests", "date-parsing", "routine"],
+    "paths": ["toyapp/dates.py", "tests/test_dates.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-05 --repo {repo}"
+  },
+  {
+    "id": "p09-task-06",
+    "prompt": "Fix the off-by-one bug in `toyapp/pagination.py`. The pagination tests describe the correct behavior.",
+    "difficulty": "medium",
+    "tags": ["bugfix", "pagination", "tests"],
+    "paths": ["toyapp/pagination.py", "tests/test_pagination.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-06 --repo {repo}"
+  },
+  {
+    "id": "p09-task-07",
+    "prompt": "Refactor the long `build_monthly_report` function in `toyapp/reports.py` into smaller helpers or modules. Preserve behavior and keep the tests passing. Preserve this public contract:\n\n```python\nfrom toyapp.reports import build_monthly_report\nreport = build_monthly_report(rows, \"2026-05\")\nassert report[\"totals\"][\"revenue\"].startswith(\"$\")\nassert \"narrative\" in report\n```",
+    "difficulty": "medium",
+    "tags": ["refactor", "multi-file", "routine"],
+    "paths": ["toyapp/reports.py", "tests/test_reports.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-07 --repo {repo}"
+  },
+  {
+    "id": "p09-task-08",
+    "prompt": "Debug the async race in `toyapp/async_jobs.py`. The async test should pass reliably when run several times, and the simulated async work should remain concurrent rather than being serialized behind one long lock.",
+    "difficulty": "hard",
+    "tags": ["async", "race-condition", "tests", "performance"],
+    "paths": ["toyapp/async_jobs.py", "tests/test_async_jobs.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-08 --repo {repo}"
+  },
+  {
+    "id": "p09-task-09",
+    "prompt": "Review `toyapp/auth.py` for security issues. Write `SECURITY_REVIEW.md` with specific findings and concrete fixes. Do not weaken the middleware.",
+    "difficulty": "hard",
+    "tags": ["security", "auth", "high-risk"],
+    "paths": ["toyapp/auth.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-09 --repo {repo}"
+  },
+  {
+    "id": "p09-task-10",
+    "prompt": "Implement an in-memory caching layer in `toyapp/cache.py` with `CachingAPIClient`. Calling `CachingAPIClient()` with no client should wrap `toyapp.api.APIClient`. The constructor should also accept an optional backend client, `clock` callable, `user_ttl`, and `account_summary_ttl`. Preserve `fetch_user(user_id)` and `fetch_account_summary(user_id)`, use separate read-through TTL caches for users and account summaries, expose `invalidate_user` and `invalidate_account_summary`, and make `invalidate_user` clear both the user cache and that user's dependent account summary cache. Coalesce concurrent requests for the same key without serializing different keys behind one long backend lock. Return stale cached data on backend failure when available, but do not mark that stale value fresh; the next call should retry the backend. Propagate the backend error to all waiters when a failed fill has no stale value, clear failed fills so a later retry can succeed, and expose `get_metrics()` with `cache_hit_total`, `cache_miss_total`, `cache_fill_seconds`, and `cache_invalidation_total`. Count `cache_miss_total` once per backend fill attempt; coalesced waiters must not inflate it.",
+    "difficulty": "hard",
+    "tags": ["architecture", "api", "caching", "concurrency"],
+    "paths": ["toyapp/api.py", "toyapp/cache.py"],
+    "success_check": "uv run --with pytest python {checker} --task p09-task-10 --repo {repo}"
+  }
+]

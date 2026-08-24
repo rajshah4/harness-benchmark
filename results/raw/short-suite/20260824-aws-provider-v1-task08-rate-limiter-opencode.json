@@ -1,0 +1,127 @@
+{
+  "run_id": "20260824-aws-provider-v1-task08-rate-limiter-opencode",
+  "suite_id": "odsc-harness-suite-v1",
+  "model": "glm-5.2",
+  "telemetry": {
+    "backend": "disabled",
+    "reason": "Laminar content export was not explicitly allowed."
+  },
+  "harness_models": {
+    "opencode": "glm-5.2"
+  },
+  "provider_ledger": {
+    "enabled": true,
+    "proxy_url": "http://127.0.0.1:4010",
+    "schema": "provider_ledger_proxy/v1"
+  },
+  "agent_canvas_version": "1.15.0",
+  "agent_server_version": "1.42.1",
+  "created_at": "2026-08-24T01:27:12.058036+00:00",
+  "task_sha256": {
+    "p09": "06a235f15742253947615204a5106997f75be879b5bcc4bb7ad609fc564374fa",
+    "rate_limiter": "deb9d0da50c312aef9a37de58c6ad81b4992d03c95ef5f70ee414d77aab7a05a",
+    "artifactsbench_spread_plate": "a539601bdab070133743777b46e33861154bdb02715c5896a6d768e0963e1a79",
+    "durable_job_queue": "a7431a1b41ebe33e3551c23db8111a5f5511b9dfbe43d95e8f23299a796cc49f"
+  },
+  "verifier_sha256": {
+    "p09": "8c68027a4e9ff1194859e459595bed7e051b5d7adcc912950056215d05ca2ddd",
+    "rate_limiter": "1b43235f19e35b0b18737a133c129c924b996013cc8c13ed59d1f67170858e83",
+    "artifactsbench_spread_plate": "ab362337e57fbcc18f54507642ea566dc16606f7d1174f8211d857f90365a4c8",
+    "durable_job_queue": "a3dfeec730fe78fc083e832ceb13373886e08b27c259659acfac02680726eb1a"
+  },
+  "tasks": [
+    {
+      "task_id": "task08-rate-limiter",
+      "prompt": "# Task 8: Token-Bucket Rate Limiter\n\nImplement a token-bucket rate limiter in `rate_limiter.py`.\n\nRequired public API:\n\n- `TokenBucket(capacity, refill_rate)`\n- `TokenBucket.allow() -> bool`\n- `TokenBucket._refill()`\n- `RateLimiter`, or equivalent module-level registry behavior\n- `get_limiter(name, capacity, refill_rate) -> TokenBucket`\n- `check(name) -> bool`\n- `RateLimitExceeded`\n- `@rate_limit(name, capacity, refill_rate)`\n\nRequired behavior:\n\n1. A new bucket begins with `capacity` available tokens.\n2. `allow()` consumes one token when available and returns `True`.\n3. `allow()` returns `False` when no token is available.\n4. Tokens refill according to elapsed monotonic time and `refill_rate` tokens per second.\n5. Refilled tokens never exceed `capacity`.\n6. A zero-capacity bucket always denies requests.\n7. Repeated registry lookups for the same name return the same bucket.\n8. The decorator calls the wrapped function when allowed and raises `RateLimitExceeded` when denied.\n\nDo not create or modify tests. You may create small temporary checks, but remove them before finishing. Work only inside the current workspace.\n\nBefore finishing:\n\n1. Inspect your final diff.\n2. Run your own behavioral checks.\n3. Report the files changed, checks run, and any remaining uncertainty.\n\n\n\nDo not modify tests. Work only inside the current repository. Before finishing, run the relevant tests or behavioral checks and inspect the final git status and diff. Report files changed, checks run, and any remaining uncertainty.",
+      "harnesses": {
+        "opencode": {
+          "conversation_id": "redacted",
+          "conversation_url": null,
+          "execution_status": "finished",
+          "workspace": "<local-workspace>",
+          "baseline_tree": "4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+          "verification": {
+            "first_pass": true,
+            "final_pass": true,
+            "repair_rounds": 0,
+            "output": "{\n  \"passed\": true,\n  \"checks\": [\n    \"basic_allow\",\n    \"refill_over_time\",\n    \"burst_capacity\",\n    \"zero_capacity\",\n    \"registry_identity\",\n    \"registry_check\",\n    \"decorator_blocks\"\n  ],\n  \"workspace\": \"<local-workspace>\"\n}\n"
+          },
+          "attempt_timing": [
+            {
+              "phase": "primary",
+              "submitted_at": "2026-08-24T01:27:12.078227+00:00",
+              "terminal_at": "2026-08-24T01:28:01.091527+00:00"
+            }
+          ],
+          "trace": {
+            "event_count": 36,
+            "started_at": "2026-08-24T01:27:12.096688",
+            "finished_at": "2026-08-24T01:27:58.703752",
+            "elapsed_seconds": 46.607,
+            "terminal_status": "finished",
+            "tool_calls": 12,
+            "models": [],
+            "visible_system_prompt_chars": 139,
+            "usage": {
+              "prompt_tokens": 146,
+              "completion_tokens": 112,
+              "cache_read_tokens": 10496,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 0,
+              "accounted_total_tokens": 10754,
+              "source": "agent-server-native-metrics"
+            },
+            "native_metrics": {
+              "usage_id": "default",
+              "metrics": {
+                "model_name": "openhands/glm-5.2",
+                "accumulated_cost": 0.0,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "openhands/glm-5.2",
+                  "prompt_tokens": 146,
+                  "completion_tokens": 112,
+                  "cache_read_tokens": 10496,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "context_window": 131072,
+                  "per_turn_token": 258,
+                  "response_id": ""
+                }
+              },
+              "all_usage_to_metrics": {
+                "default": {
+                  "model_name": "openhands/glm-5.2",
+                  "accumulated_cost": 0.0,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/glm-5.2",
+                    "prompt_tokens": 146,
+                    "completion_tokens": 112,
+                    "cache_read_tokens": 10496,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 0,
+                    "context_window": 131072,
+                    "per_turn_token": 258,
+                    "response_id": ""
+                  }
+                }
+              }
+            }
+          },
+          "diff": {
+            "changed_files": [
+              "?? __pycache__/",
+              "?? rate_limiter.py"
+            ],
+            "additions": 102,
+            "deletions": 0
+          }
+        }
+      }
+    }
+  ],
+  "laminar": {
+    "status": "disabled"
+  }
+}
