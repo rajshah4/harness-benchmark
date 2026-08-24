@@ -77,6 +77,19 @@ The controlled path requires:
 - A verifier environment with the browser dependencies installed
 - Explicit approval before exporting prompt and tool content to Laminar
 
+Create the verifier environment before starting a long run:
+
+```bash
+python3 -m venv .venv-verifier
+.venv-verifier/bin/pip install pytest playwright
+.venv-verifier/bin/playwright install chromium
+```
+
+Pass `.venv-verifier/bin/python` to `run_suite.py --verifier-python`, or use
+`runner/run_current_main_long_matrix.py`, which selects that path by default.
+Treat a missing Playwright or pytest import as a verifier setup failure, not a
+solution failure.
+
 Run the ledger calibration gates in `../harness-suite/MEASUREMENT-PROTOCOL.md` before publishing token or cost comparisons.
 
 ## Recovery variant

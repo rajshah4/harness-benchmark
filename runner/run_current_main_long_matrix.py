@@ -39,6 +39,11 @@ def main() -> None:
     parser.add_argument("--date", default="20260824")
     parser.add_argument("--ledger-proxy-url", default="http://127.0.0.1:4010")
     parser.add_argument("--timeout-seconds", type=int, default=2400)
+    parser.add_argument(
+        "--verifier-python",
+        default=str(ROOT / ".venv-verifier" / "bin" / "python"),
+        help="Python environment containing pytest, Playwright, and Chromium.",
+    )
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
@@ -67,6 +72,8 @@ def main() -> None:
             args.ledger_proxy_url,
             "--ledger-settle-seconds",
             "2",
+            "--verifier-python",
+            args.verifier_python,
         ]
         print(f"START {run_id}", flush=True)
         subprocess.run(command, cwd=ROOT, check=True)
