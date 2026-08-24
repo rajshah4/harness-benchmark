@@ -33,6 +33,20 @@ some harness-specific request parameters can still differ.
 The provider did not report comparable Sonnet cost fields, so cost is
 unavailable rather than zero.
 
+## Plain-language conclusion
+
+On this long benchmark, OpenHands worked much better with Sonnet than with
+GLM-5.2. Sonnet completed the OpenHands run in 66 model calls and 12 minutes,
+while the two GLM trials required 95 to 129 calls and 17 to 27 minutes. Sonnet
+also used 4.26 million input tokens, compared with 6.76 to 10.20 million for
+GLM.
+
+Pi and OpenCode did not receive the same broad efficiency improvement from
+switching models. This suggests Sonnet is a better match for the way OpenHands
+structures its instructions, tools, and agent loop. The shorter path still had
+a quality tradeoff: it passed seven of eight checks but stopped without finding
+a frontend defect.
+
 ## What changed when Pi enabled cache control
 
 | Metric | Pi default | Pi cache enabled |
@@ -97,4 +111,3 @@ Fixing the first did not change the second.
 - `raw/reruns/20260824-aws-incident-sonnet-v2-pi-cache-enabled-verification-audit.txt`
 - `provider-ledgers/20260824-aws-incident-sonnet-pi-cache-comparison-ledger.jsonl`
 - OpenHands repeat: `incident-repeat-trials.md`
-
