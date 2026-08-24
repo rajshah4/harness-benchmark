@@ -1,0 +1,31 @@
+{
+  "providers": {
+    "openhands": {
+      "baseUrl": "http://127.0.0.1:4010/v1/pi-sonnet",
+      "api": "openai-completions",
+      "apiKey": "$LLM_API_KEY",
+      "authHeader": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "cacheControlFormat": "anthropic"
+      },
+      "models": [
+        {
+          "id": "claude-sonnet-4-5-20250929",
+          "name": "OpenHands Sonnet 4.5 through provider ledger",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 200000,
+          "maxTokens": 64000,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    }
+  }
+}

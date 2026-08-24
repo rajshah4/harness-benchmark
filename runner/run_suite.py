@@ -51,6 +51,8 @@ PROFILE_NAMES = {
     "opencode": "ODSC-OpenCode-GLM52",
     "codex": "Codex",
     "openhands-sonnet": "Sonnet",
+    "pi-sonnet": "ODSC-Pi-Sonnet",
+    "opencode-sonnet": "ODSC-OpenCode-Sonnet",
 }
 DEFAULT_HARNESSES = ("openhands", "pi", "opencode")
 HARNESS_MODELS = {
@@ -59,6 +61,8 @@ HARNESS_MODELS = {
     "opencode": "glm-5.2",
     "codex": "gpt-5.5",
     "openhands-sonnet": "openhands/claude-sonnet-4-5-20250929",
+    "pi-sonnet": "openhands/claude-sonnet-4-5-20250929",
+    "opencode-sonnet": "openhands/claude-sonnet-4-5-20250929",
 }
 
 TERMINAL_STATUSES = {"finished", "error", "stopped"}
@@ -636,9 +640,9 @@ def refresh_results(path: Path) -> None:
     for task in results["tasks"]:
         for harness, result in task["harnesses"].items():
             workspace = Path(result["workspace"])
-            if harness == "pi":
+            if harness.startswith("pi"):
                 result["trace"]["usage"] = pi_usage(workspace) or result["trace"]["usage"]
-            elif harness == "opencode":
+            elif harness.startswith("opencode"):
                 result["trace"]["usage"] = (
                     opencode_usage(workspace) or result["trace"]["usage"]
                 )

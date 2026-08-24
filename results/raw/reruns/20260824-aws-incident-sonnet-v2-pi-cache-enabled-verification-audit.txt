@@ -1,0 +1,16 @@
+Independent verifier rerun with the Playwright dependency available
+
+PASS: existing regression tests
+PASS: persistence, deduplication, and idempotency
+PASS: versions, transitions, and audit history
+FAIL: concurrent alert deduplication
+  AssertionError: incident count: expected 1, got 6
+PASS: escalation concurrency and recovery
+PASS: HTTP API workflow and conflicts
+PASS: CLI export and idempotent import
+FAIL: responsive browser workflow
+  TimeoutError: Locator.wait_for: Timeout 30000ms exceeded.
+  The data-testid="feedback" element remained hidden and empty.
+
+6/8 checks passed
+

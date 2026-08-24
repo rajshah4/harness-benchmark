@@ -45,6 +45,7 @@ The long project shows why call count alone is not enough. Pi made fewer calls t
 - [`results/spread-plate-repeat-trial.md`](results/spread-plate-repeat-trial.md): a second OpenHands spread-plate trial, including provider stalls and agent-loop variance.
 - [`results/incident-project.md`](results/incident-project.md): the full-stack incident project and verifier audit.
 - [`results/incident-repeat-trials.md`](results/incident-repeat-trials.md): repeated OpenHands GLM and Sonnet incident runs.
+- [`results/incident-sonnet-harness-comparison.md`](results/incident-sonnet-harness-comparison.md): Sonnet across harnesses and the controlled Pi cache-marker experiment.
 - [`results/commit0-comparison.md`](results/commit0-comparison.md): why the public Commit0 benchmark can favor OpenHands while these experiments find higher OpenHands resource use.
 - [`results/codex-control.md`](results/codex-control.md): the available Codex measurements and why they are kept outside the same-model table.
 - [`results/raw/`](results/raw/): sanitized per-run records.

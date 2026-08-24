@@ -25,7 +25,9 @@ from run_suite import (
 
 
 def message(turn: int) -> str:
-    prefix = "CACHE-CALIBRATION-STABLE-PREFIX " * 300
+    # Keep the reusable prefix above provider cache-eligibility thresholds even
+    # for lightweight harnesses with small system prompts and tool schemas.
+    prefix = "CACHE-CALIBRATION-STABLE-PREFIX " * 1200
     return (
         f"{prefix}\n\n"
         f"This is calibration turn {turn}. Do not use tools or edit files. "
@@ -77,7 +79,10 @@ def main() -> int:
     parser.add_argument("--ledger-proxy-url", required=True)
     parser.add_argument(
         "--harness", action="append",
-        choices=("openhands", "openhands-sonnet", "pi", "opencode")
+        choices=(
+            "openhands", "openhands-sonnet", "pi", "pi-sonnet",
+            "opencode", "opencode-sonnet",
+        )
     )
     args = parser.parse_args()
     harnesses = tuple(args.harness or ("openhands", "pi", "opencode"))

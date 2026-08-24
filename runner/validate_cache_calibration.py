@@ -42,7 +42,10 @@ def main() -> int:
     parser.add_argument("run_id")
     parser.add_argument(
         "--harness", action="append",
-        choices=("openhands", "openhands-sonnet", "pi", "opencode")
+        choices=(
+            "openhands", "openhands-sonnet", "pi", "pi-sonnet",
+            "opencode", "opencode-sonnet",
+        )
     )
     args = parser.parse_args()
     result = validate(args.ledger, args.run_id, args.harness or ["openhands", "pi", "opencode"])

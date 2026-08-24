@@ -1,0 +1,6 @@
+{
+  "defaultProjectTrust": "always",
+  "quietStartup": true,
+  "defaultProvider": "openhands",
+  "defaultModel": "claude-sonnet-4-5-20250929"
+}

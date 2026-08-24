@@ -1,4 +1,5 @@
 from provider_ledger_proxy import (
+    cache_request_hints,
     request_metadata,
     response_error_metadata,
     response_usage_metadata,
@@ -95,6 +96,19 @@ def test_response_metadata_keeps_only_safe_headers_and_no_content():
     assert metadata["response_bytes"] == 21
     assert metadata["elapsed_ms"] == 12.346
     assert "private response text" not in repr(metadata)
+
+
+def test_cache_request_hints_preserve_structure_not_values():
+    hints = cache_request_hints(
+        b'{"messages":[{"cache_control":{"type":"ephemeral"}}],"prompt_cache_key":"private-key"}',
+        {"anthropic-beta": "prompt-caching-2024-07-31"},
+    )
+    assert hints == {
+        "cache_control_paths": ["$.messages[0].cache_control", "$.prompt_cache_key"],
+        "anthropic_beta_present": True,
+        "anthropic_beta_mentions_prompt_caching": True,
+    }
+    assert "private-key" not in repr(hints)
 
 
 def test_detects_anthropic_error_in_successful_sse_response_without_message():

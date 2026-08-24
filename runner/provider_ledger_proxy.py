@@ -192,6 +192,35 @@ def request_metadata(body: bytes) -> dict[str, Any]:
     }
 
 
+def cache_request_hints(payload: bytes, headers: dict[str, str]) -> dict[str, Any]:
+    """Capture cache-routing signals without storing request content or secrets."""
+    try:
+        parsed = json.loads(payload)
+    except json.JSONDecodeError:
+        parsed = None
+
+    paths: list[str] = []
+
+    def visit(value: Any, path: str = "$") -> None:
+        if isinstance(value, dict):
+            for key, child in value.items():
+                child_path = f"{path}.{key}"
+                if key.lower() in {"cache_control", "cachecontrol", "prompt_cache_key", "promptcachekey"}:
+                    paths.append(child_path)
+                visit(child, child_path)
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                visit(child, f"{path}[{index}]")
+
+    visit(parsed)
+    beta = headers.get("anthropic-beta") or headers.get("Anthropic-Beta")
+    return {
+        "cache_control_paths": paths,
+        "anthropic_beta_present": beta is not None,
+        "anthropic_beta_mentions_prompt_caching": bool(beta and "prompt-caching" in beta),
+    }
+
+
 def safe_response_metadata(headers: dict[str, str], body: bytes, elapsed_ms: float) -> dict[str, Any]:
     """Retain operational cache evidence without credentials or response content."""
     allowed = {
@@ -346,6 +375,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             "upstream_path": upstream_path.split("?", 1)[0],
             "request_sha256": hashlib.sha256(body).hexdigest(),
             "request": metadata,
+            "cache_request_hints": cache_request_hints(body, headers),
             "response_status": response_status,
             "response_content_type": content_type,
             "response": safe_response_metadata(

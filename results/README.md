@@ -14,4 +14,8 @@ The [`incident-repeat-trials.md`](incident-repeat-trials.md) report compares a
 second OpenHands GLM run and an OpenHands Sonnet run with the original incident
 project cells.
 
+The [`incident-sonnet-harness-comparison.md`](incident-sonnet-harness-comparison.md)
+report compares Sonnet across OpenHands, Pi, and OpenCode, then isolates Pi's
+missing Sonnet cache markers with a cache-enabled repeat.
+
 The [`traces/`](traces/) directory contains complete sanitized Canvas event streams for the accepted long-project runs. It omits deployment metadata and invalid attempts. See its README and manifest for the exact inclusion and redaction rules.
