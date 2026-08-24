@@ -2,22 +2,22 @@
   "schema_version": 1,
   "traces": [
     {
-      "file": "20260824-aws-incident-v2-openhands.jsonl",
-      "run_id": "20260824-aws-incident-v2-openhands",
+      "file": "20260824-aws-incident-rerun-v1-openhands-sonnet.jsonl",
+      "run_id": "20260824-aws-incident-rerun-v1-openhands-sonnet",
+      "task": "incident-operations-center",
+      "harness": "openhands-sonnet",
+      "model": "openhands/claude-sonnet-4-5-20250929",
+      "event_count": 202,
+      "sha256": "be416387bef76935487116e825055d91f03fc0a8b071033d92a72eb163c2f374"
+    },
+    {
+      "file": "20260824-aws-incident-rerun-v2-openhands.jsonl",
+      "run_id": "20260824-aws-incident-rerun-v2-openhands",
       "task": "incident-operations-center",
       "harness": "openhands",
       "model": "glm-5.2",
-      "event_count": 290,
-      "sha256": "164957fb58cc44c2513cef835ced4fd051a4c58fb3f9a91beb03c6f93c255b6b"
-    },
-    {
-      "file": "20260824-aws-long-projects-v2-durable-job-queue-pi.jsonl",
-      "run_id": "20260824-aws-long-projects-v2-durable-job-queue-pi",
-      "task": "durable-job-queue",
-      "harness": "pi",
-      "model": "glm-5.2",
-      "event_count": 46,
-      "sha256": "35c872ca79f0cc24875bb08cb06cb862ac224d5989770491f2dd5a42bc22ba46"
+      "event_count": 397,
+      "sha256": "878e4557fdadbaecc1a6c4bf6c4fa3cac51e5ad77da96d28c9e244e40d90a305"
     },
     {
       "file": "20260824-aws-incident-v2-opencode.jsonl",
@@ -29,40 +29,13 @@
       "sha256": "d8aa9e58287b0b76d631ff71ba898ef7e9e1a164224d5ac464942cc827a544eb"
     },
     {
-      "file": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-opencode.jsonl",
-      "run_id": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-opencode",
-      "task": "artifactsbench-spread-plate",
-      "harness": "opencode",
-      "model": "glm-5.2",
-      "event_count": 48,
-      "sha256": "a228970e9d3e5009645ea358de98a6984d8dceb0bbf269f491698fa9e0ba9d13"
-    },
-    {
-      "file": "20260824-aws-long-projects-v2-durable-job-queue-openhands.jsonl",
-      "run_id": "20260824-aws-long-projects-v2-durable-job-queue-openhands",
-      "task": "durable-job-queue",
+      "file": "20260824-aws-incident-v2-openhands.jsonl",
+      "run_id": "20260824-aws-incident-v2-openhands",
+      "task": "incident-operations-center",
       "harness": "openhands",
       "model": "glm-5.2",
-      "event_count": 121,
-      "sha256": "0a9ac2a88a0f44c1cc084d0fc0c0900bdfec643140057119022e428848361743"
-    },
-    {
-      "file": "20260824-aws-long-projects-v2-durable-job-queue-opencode.jsonl",
-      "run_id": "20260824-aws-long-projects-v2-durable-job-queue-opencode",
-      "task": "durable-job-queue",
-      "harness": "opencode",
-      "model": "glm-5.2",
-      "event_count": 92,
-      "sha256": "0effe4bec439636156230db8ee4680b29db730b8ee1dd161d256c8e75e837089"
-    },
-    {
-      "file": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-pi.jsonl",
-      "run_id": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-pi",
-      "task": "artifactsbench-spread-plate",
-      "harness": "pi",
-      "model": "glm-5.2",
-      "event_count": 42,
-      "sha256": "b715a912fe1db6741e5d942cf459c0ae39bdada720fe732655ce45a29ee89642"
+      "event_count": 290,
+      "sha256": "164957fb58cc44c2513cef835ced4fd051a4c58fb3f9a91beb03c6f93c255b6b"
     },
     {
       "file": "20260824-aws-incident-v2-pi.jsonl",
@@ -74,6 +47,15 @@
       "sha256": "708fe87725a3fe9b8cafb9b12316088838648de41c6c96851fc03d658bf00c91"
     },
     {
+      "file": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-opencode.jsonl",
+      "run_id": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-opencode",
+      "task": "artifactsbench-spread-plate",
+      "harness": "opencode",
+      "model": "glm-5.2",
+      "event_count": 48,
+      "sha256": "a228970e9d3e5009645ea358de98a6984d8dceb0bbf269f491698fa9e0ba9d13"
+    },
+    {
       "file": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-openhands.jsonl",
       "run_id": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-openhands",
       "task": "artifactsbench-spread-plate",
@@ -81,6 +63,51 @@
       "model": "glm-5.2",
       "event_count": 94,
       "sha256": "e74906cfcca91789eaf2df881c5af141d9f871dd968c0603e550e23e98b61843"
+    },
+    {
+      "file": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-pi.jsonl",
+      "run_id": "20260824-aws-long-projects-v2-artifactsbench-spread-plate-pi",
+      "task": "artifactsbench-spread-plate",
+      "harness": "pi",
+      "model": "glm-5.2",
+      "event_count": 42,
+      "sha256": "b715a912fe1db6741e5d942cf459c0ae39bdada720fe732655ce45a29ee89642"
+    },
+    {
+      "file": "20260824-aws-long-projects-v2-durable-job-queue-opencode.jsonl",
+      "run_id": "20260824-aws-long-projects-v2-durable-job-queue-opencode",
+      "task": "durable-job-queue",
+      "harness": "opencode",
+      "model": "glm-5.2",
+      "event_count": 92,
+      "sha256": "0effe4bec439636156230db8ee4680b29db730b8ee1dd161d256c8e75e837089"
+    },
+    {
+      "file": "20260824-aws-long-projects-v2-durable-job-queue-openhands.jsonl",
+      "run_id": "20260824-aws-long-projects-v2-durable-job-queue-openhands",
+      "task": "durable-job-queue",
+      "harness": "openhands",
+      "model": "glm-5.2",
+      "event_count": 121,
+      "sha256": "0a9ac2a88a0f44c1cc084d0fc0c0900bdfec643140057119022e428848361743"
+    },
+    {
+      "file": "20260824-aws-long-projects-v2-durable-job-queue-pi.jsonl",
+      "run_id": "20260824-aws-long-projects-v2-durable-job-queue-pi",
+      "task": "durable-job-queue",
+      "harness": "pi",
+      "model": "glm-5.2",
+      "event_count": 46,
+      "sha256": "35c872ca79f0cc24875bb08cb06cb862ac224d5989770491f2dd5a42bc22ba46"
+    },
+    {
+      "file": "20260824-aws-long-rerun-v1-artifactsbench-spread-plate-openhands.jsonl",
+      "run_id": "20260824-aws-long-rerun-v1-artifactsbench-spread-plate-openhands",
+      "task": "artifactsbench-spread-plate",
+      "harness": "openhands",
+      "model": "glm-5.2",
+      "event_count": 133,
+      "sha256": "8a829704a11c9c9488aa8b9c263ef9a0233c7f48202343c90849181aa5452d30"
     }
   ]
 }

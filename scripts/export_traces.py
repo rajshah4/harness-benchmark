@@ -111,10 +111,31 @@ def export_trace(conversation_dir: Path, destination: Path) -> dict[str, Any]:
     }
 
 
+def merge_manifest_entries(
+    existing: list[dict[str, Any]], exported: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Replace matching run IDs, preserve other entries, and sort deterministically."""
+    exported_run_ids = {item["run_id"] for item in exported}
+    merged = [item for item in existing if item["run_id"] not in exported_run_ids]
+    merged.extend(exported)
+    return sorted(merged, key=lambda item: item["run_id"])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path, help="Agent Canvas state directory")
     parser.add_argument("destination", type=Path, help="Trace output directory")
+    parser.add_argument(
+        "--run-id",
+        action="append",
+        default=[],
+        help="Export an exact run ID. Repeat to export multiple runs.",
+    )
+    parser.add_argument(
+        "--merge-manifest",
+        action="store_true",
+        help="Merge exported traces into an existing manifest by run ID.",
+    )
     args = parser.parse_args()
     args.destination.mkdir(parents=True, exist_ok=True)
 
@@ -125,16 +146,28 @@ def main() -> None:
             continue
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
         run_id = meta.get("observability_metadata", {}).get("run_id", "")
-        if not run_id.startswith(ACCEPTED_RUN_PREFIXES):
+        selected = run_id in args.run_id if args.run_id else run_id.startswith(
+            ACCEPTED_RUN_PREFIXES
+        )
+        if not selected:
             continue
         manifest.append(export_trace(conversation_dir, args.destination))
 
     manifest_path = args.destination / "manifest.json"
+    exported_count = len(manifest)
+    if args.merge_manifest and manifest_path.exists():
+        existing = json.loads(manifest_path.read_text(encoding="utf-8"))["traces"]
+        manifest = merge_manifest_entries(existing, manifest)
+    else:
+        manifest.sort(key=lambda item: item["run_id"])
     manifest_path.write_text(
         json.dumps({"schema_version": 1, "traces": manifest}, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"Exported {len(manifest)} traces to {args.destination}")
+    print(
+        f"Exported {exported_count} traces; "
+        f"manifest now contains {len(manifest)} traces in {args.destination}"
+    )
 
 
 if __name__ == "__main__":

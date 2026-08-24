@@ -1,4 +1,4 @@
-from export_traces import redact_text, sanitize
+from export_traces import merge_manifest_entries, redact_text, sanitize
 
 
 def test_structured_credentials_are_redacted() -> None:
@@ -49,3 +49,15 @@ def test_placeholders_are_not_mistaken_for_secret_values() -> None:
     text = "Use $LLM_API_KEY and X-Session-API-Key: $SESSION_KEY"
     assert redact_text(text) == text
 
+
+def test_manifest_merge_replaces_matching_runs_and_preserves_others() -> None:
+    existing = [
+        {"run_id": "run-b", "sha256": "old"},
+        {"run_id": "run-a", "sha256": "keep"},
+    ]
+    exported = [{"run_id": "run-b", "sha256": "new"}]
+
+    assert merge_manifest_entries(existing, exported) == [
+        {"run_id": "run-a", "sha256": "keep"},
+        {"run_id": "run-b", "sha256": "new"},
+    ]
