@@ -39,11 +39,11 @@ The long project shows why call count alone is not enough. Pi made fewer calls t
 We repeated the incident project with Sonnet to test whether the GLM-5.2
 pattern was a property of the harness alone. It was not.
 
-| Harness | Quality | Model calls | Input tokens | Cache rate | Time |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| OpenHands | 7/8 | 66 | 4,261,186 | 97.7% | 12m 24s |
-| OpenCode | 6/8 | 75 | 4,152,996 | 97.9% | 15m 52s |
-| Pi, default Sonnet configuration | 7/8 | 89 | 3,351,630 | 0.0% | 14m 44s |
+| Harness | Quality | Time | Model calls | Tool calls | Input | Cached | Fresh input | Output |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| OpenHands | 7/8 | 12m 24s | 66 | 65 | 4.26M | 97.7% | 98K | 42.5K |
+| Pi, cache enabled | 6/8 | 16m 49s | 89 | 88 | 3.84M | 94.5% | 213K | 58.3K |
+| OpenCode | 6/8 | 15m 52s | 75 | 82 | 4.15M | 97.9% | 87K | 82.6K |
 
 The ordering changed with the model. OpenHands needed 95 to 129 calls in its
 two GLM-5.2 trials, but only 66 with Sonnet. Pi moved in the other direction:
@@ -53,10 +53,10 @@ ranking of harnesses. Sonnet appears to be a particularly good match for how
 OpenHands structures its instructions, tools, and loop, although its shorter
 path still missed one frontend defect.
 
-Pi's zero Sonnet cache rate was also a compatibility issue rather than missing
-telemetry. Enabling Pi's documented Anthropic-style cache controls raised its
-cache rate to 94.5 percent, but it still made 89 calls. Caching improved fresh
-token usage, not the agent loop. See the
+Pi initially received zero cache reads because its Sonnet requests did not
+include Anthropic-style cache controls. The table uses the controlled Pi
+rerun with those controls enabled. Its cache rate reached 94.5 percent, but it
+still made 89 calls. Caching reduced fresh input, not the agent loop. See the
 [`Sonnet harness comparison`](results/incident-sonnet-harness-comparison.md)
 for the controlled cache repeat and sanitized evidence. The provider did not
 return comparable Sonnet costs, so they are not shown here.
