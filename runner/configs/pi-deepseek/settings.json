@@ -1,0 +1,6 @@
+{
+  "defaultProjectTrust": "always",
+  "quietStartup": true,
+  "defaultProvider": "openhands",
+  "defaultModel": "deepseek-v4-pro"
+}

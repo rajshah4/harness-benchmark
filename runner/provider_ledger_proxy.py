@@ -44,13 +44,21 @@ def response_usage_metadata(body: bytes, content_type: str) -> tuple[str | None,
                 continue
             event_usage = event.get("usage")
             message = event.get("message")
+            response = event.get("response")
             if not isinstance(event_usage, dict) and isinstance(message, dict):
                 event_usage = message.get("usage")
+            # OpenAI Responses streaming emits the final provider usage inside
+            # `response.completed.data.response.usage`, rather than at the
+            # event root used by Chat Completions and Anthropic streams.
+            if not isinstance(event_usage, dict) and isinstance(response, dict):
+                event_usage = response.get("usage")
             if isinstance(event_usage, dict):
                 usage = {**(usage or {}), **event_usage}
             candidate_id = event.get("id")
             if not isinstance(candidate_id, str) and isinstance(message, dict):
                 candidate_id = message.get("id")
+            if not isinstance(candidate_id, str) and isinstance(response, dict):
+                candidate_id = response.get("id")
             if isinstance(candidate_id, str):
                 response_id = candidate_id
         return response_id, usage

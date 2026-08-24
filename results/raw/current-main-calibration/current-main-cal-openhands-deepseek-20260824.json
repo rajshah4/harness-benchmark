@@ -1,0 +1,162 @@
+{
+  "run_id": "current-main-cal-openhands-deepseek-20260824",
+  "suite_id": "odsc-harness-suite-v1",
+  "model": "glm-5.2",
+  "telemetry": {
+    "backend": "disabled",
+    "reason": "Laminar content export was not explicitly allowed."
+  },
+  "harness_models": {
+    "openhands-deepseek": "openhands/deepseek-v4-pro"
+  },
+  "provider_ledger": {
+    "enabled": true,
+    "proxy_url": "http://127.0.0.1:4010",
+    "schema": "provider_ledger_proxy/v1"
+  },
+  "agent_canvas_version": "1.15.0",
+  "agent_server_version": "1.42.1",
+  "skill_context": {
+    "mode": "canvas-curated",
+    "source": "OpenHands/OpenHands#16860; @openhands/extensions 0.18.0",
+    "count": 11,
+    "names": [
+      "add-skill",
+      "agent-canvas-environment",
+      "agent-memory",
+      "agent-sdk-builder",
+      "code-review",
+      "docker",
+      "github",
+      "openhands-api",
+      "openhands-automation",
+      "openhands-sdk",
+      "skill-creator"
+    ]
+  },
+  "created_at": "2026-08-24T21:48:08.971596+00:00",
+  "task_sha256": {
+    "p09": "06a235f15742253947615204a5106997f75be879b5bcc4bb7ad609fc564374fa",
+    "rate_limiter": "deb9d0da50c312aef9a37de58c6ad81b4992d03c95ef5f70ee414d77aab7a05a",
+    "artifactsbench_spread_plate": "a539601bdab070133743777b46e33861154bdb02715c5896a6d768e0963e1a79",
+    "durable_job_queue": "a7431a1b41ebe33e3551c23db8111a5f5511b9dfbe43d95e8f23299a796cc49f",
+    "incident_operations_center": "863be355e211a5139c94cc2bd18a9ad2ba9ae0d7f91b41b5daf90bb35fbff49a"
+  },
+  "verifier_sha256": {
+    "p09": "8c68027a4e9ff1194859e459595bed7e051b5d7adcc912950056215d05ca2ddd",
+    "rate_limiter": "1b43235f19e35b0b18737a133c129c924b996013cc8c13ed59d1f67170858e83",
+    "artifactsbench_spread_plate": "ab362337e57fbcc18f54507642ea566dc16606f7d1174f8211d857f90365a4c8",
+    "durable_job_queue": "a3dfeec730fe78fc083e832ceb13373886e08b27c259659acfac02680726eb1a",
+    "incident_operations_center": "9c9cbfdaf5ac9699add2688c7b9b00841f45750b2720bbf086d9b190063dd843"
+  },
+  "tasks": [
+    {
+      "task_id": "p09-task-01",
+      "prompt": "Rename the local variable `raw_items` to `source_items` in `toyapp/pagination.py`. Keep behavior unchanged and do not edit unrelated files.\n\nDo not modify tests. Work only inside the current repository. Before finishing, run the relevant tests or behavioral checks and inspect the final git status and diff. Report files changed, checks run, and any remaining uncertainty.",
+      "harnesses": {
+        "openhands-deepseek": {
+          "conversation_id": "2cd73a4a-528d-4bed-9487-44357948a882",
+          "conversation_url": "http://localhost:8000/conversations/2cd73a4a-528d-4bed-9487-44357948a882",
+          "execution_status": "finished",
+          "workspace": "/home/ubuntu/harness-benchmark/benchmark-runs/current-main-cal-openhands-deepseek-20260824/p09-task-01/openhands-deepseek",
+          "baseline_tree": "f429c6182479c665cd8ff636d429bb84d9560676",
+          "verification": {
+            "first_pass": true,
+            "final_pass": true,
+            "repair_rounds": 0,
+            "output": "p09-task-01: PASS\n"
+          },
+          "attempt_timing": [
+            {
+              "phase": "primary",
+              "submitted_at": "2026-08-24T21:48:09.001089+00:00",
+              "terminal_at": "2026-08-24T21:49:26.746321+00:00"
+            }
+          ],
+          "trace": {
+            "event_count": 34,
+            "started_at": "2026-08-24T21:48:09.320248",
+            "finished_at": "2026-08-24T21:49:22.485383",
+            "elapsed_seconds": 73.165,
+            "terminal_status": "finished",
+            "tool_calls": 9,
+            "models": [],
+            "visible_system_prompt_chars": 15083,
+            "usage": {
+              "prompt_tokens": 125391,
+              "completion_tokens": 2665,
+              "cache_read_tokens": 108544,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 852,
+              "accounted_total_tokens": 236600,
+              "source": "agent-server-native-metrics"
+            },
+            "native_metrics": {
+              "usage_id": "default",
+              "metrics": {
+                "model_name": "openhands/deepseek-v4-pro",
+                "accumulated_cost": 0.02073246912,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "openhands/deepseek-v4-pro",
+                  "prompt_tokens": 125391,
+                  "completion_tokens": 2665,
+                  "cache_read_tokens": 108544,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 852,
+                  "context_window": 1000000,
+                  "per_turn_token": 14910,
+                  "response_id": ""
+                }
+              },
+              "all_usage_to_metrics": {
+                "default": {
+                  "model_name": "openhands/deepseek-v4-pro",
+                  "accumulated_cost": 0.02073246912,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/deepseek-v4-pro",
+                    "prompt_tokens": 125391,
+                    "completion_tokens": 2665,
+                    "cache_read_tokens": 108544,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 852,
+                    "context_window": 1000000,
+                    "per_turn_token": 14910,
+                    "response_id": ""
+                  }
+                },
+                "condenser": {
+                  "model_name": "openhands/deepseek-v4-pro",
+                  "accumulated_cost": 0.0,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/deepseek-v4-pro",
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 0,
+                    "context_window": 0,
+                    "per_turn_token": 0,
+                    "response_id": ""
+                  }
+                }
+              }
+            }
+          },
+          "diff": {
+            "changed_files": [
+              " M toyapp/pagination.py"
+            ],
+            "additions": 3,
+            "deletions": 3
+          }
+        }
+      }
+    }
+  ],
+  "laminar": {
+    "status": "disabled"
+  }
+}

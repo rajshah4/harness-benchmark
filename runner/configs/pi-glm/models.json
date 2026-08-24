@@ -1,0 +1,30 @@
+{
+  "providers": {
+    "openhands": {
+      "baseUrl": "http://127.0.0.1:4010/v1/pi",
+      "api": "openai-completions",
+      "apiKey": "$LLM_API_KEY",
+      "authHeader": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false
+      },
+      "models": [
+        {
+          "id": "glm-5.2",
+          "name": "OpenHands GLM-5.2 through provider ledger",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 128000,
+          "maxTokens": 16384,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    }
+  }
+}

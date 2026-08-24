@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -53,6 +54,12 @@ PROFILE_NAMES = {
     "openhands-sonnet": "Sonnet",
     "pi-sonnet": "ODSC-Pi-Sonnet",
     "opencode-sonnet": "ODSC-OpenCode-Sonnet",
+    "openhands-deepseek": "DeepSeek-V4",
+    "pi-deepseek": "ODSC-Pi-DeepSeekV4",
+    "opencode-deepseek": "ODSC-OpenCode-DeepSeekV4",
+    "codex-glm": "ODSC-Codex-GLM52",
+    "codex-deepseek": "ODSC-Codex-DeepSeekV4",
+    "codex-sonnet": "ODSC-Codex-Sonnet",
 }
 DEFAULT_HARNESSES = ("openhands", "pi", "opencode")
 HARNESS_MODELS = {
@@ -63,9 +70,40 @@ HARNESS_MODELS = {
     "openhands-sonnet": "openhands/claude-sonnet-4-5-20250929",
     "pi-sonnet": "openhands/claude-sonnet-4-5-20250929",
     "opencode-sonnet": "openhands/claude-sonnet-4-5-20250929",
+    "openhands-deepseek": "openhands/deepseek-v4-pro",
+    "pi-deepseek": "openhands/deepseek-v4-pro",
+    "opencode-deepseek": "openhands/deepseek-v4-pro",
+    "codex-glm": "glm-5.2",
+    "codex-deepseek": "deepseek-v4-pro",
+    "codex-sonnet": "claude-sonnet-4-5-20250929",
 }
 
+# OpenHands/extensions 0.18.0, consumed by Agent Canvas at the merge commit for
+# OpenHands/OpenHands#16860. Keep this explicit so benchmark evidence records
+# the exact allow-list instead of silently following a later catalog release.
+CURATED_CANVAS_SKILLS = (
+    "add-skill",
+    "agent-canvas-environment",
+    "agent-memory",
+    "agent-sdk-builder",
+    "code-review",
+    "docker",
+    "github",
+    "openhands-api",
+    "openhands-automation",
+    "openhands-sdk",
+    "skill-creator",
+)
+
 TERMINAL_STATUSES = {"finished", "error", "stopped"}
+
+CODEX_CONFIG_DIRS = {
+    "codex-glm": Path(__file__).resolve().parent / "configs" / "codex-glm",
+    "codex-deepseek": Path(__file__).resolve().parent
+    / "configs"
+    / "codex-deepseek",
+    "codex-sonnet": Path(__file__).resolve().parent / "configs" / "codex-sonnet",
+}
 
 
 def api_key() -> str:
@@ -89,6 +127,23 @@ def secret_source(name: str, lookup_url: str, key: str) -> dict[str, object]:
 
 def llm_secret_for_harness(harness: str, key: str) -> dict[str, object]:
     return secret_source("LLM_API_KEY", SECRET_LOOKUP_URL, key)
+
+
+def secret_value(name: str, lookup_url: str, key: str) -> str:
+    """Resolve a runtime secret without writing it to benchmark evidence."""
+    value = os.environ.get(name)
+    if value:
+        return value
+    request = urllib.request.Request(
+        lookup_url,
+        method="GET",
+        headers={"X-Session-API-Key": key},
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        value = response.read().decode("utf-8").strip()
+    if not value:
+        raise RuntimeError(f"Agent Canvas secret {name} is empty")
+    return value
 
 
 def request_json(method: str, path: str, payload: dict | None = None) -> dict:
@@ -226,14 +281,16 @@ def launch(
     run_id: str,
     task_id: str,
     harness: str,
-    profile_id: str,
+    profile_id: str | None,
+    agent_settings: dict | None,
     workspace: Path,
     enable_laminar: bool,
 ) -> str:
+    if (profile_id is None) == (agent_settings is None):
+        raise ValueError("launch requires exactly one agent source")
     key = api_key()
     payload = {
         "workspace": {"kind": "LocalWorkspace", "working_dir": str(workspace)},
-        "agent_profile_id": profile_id,
         "initial_message": {
             "role": "user",
             "content": [{"type": "text", "text": task_prompt(task_id)}],
@@ -267,6 +324,21 @@ def launch(
             "model": HARNESS_MODELS[harness],
         },
     }
+    # Agent Server selects an ACP authentication method from the subprocess
+    # environment before it starts Codex. Supplying CODEX_HOME only through an
+    # `env ...` command prefix is too late: the server can see a host ChatGPT
+    # login first and choose subscription authentication even though the child
+    # uses a custom provider. Pass the model-specific directory as an ordinary
+    # conversation environment value so both sides resolve the same config.
+    if harness in CODEX_CONFIG_DIRS:
+        payload["secrets"]["CODEX_HOME"] = {
+            "kind": "StaticSecret",
+            "value": str(CODEX_CONFIG_DIRS[harness]),
+        }
+    if profile_id is not None:
+        payload["agent_profile_id"] = profile_id
+    else:
+        payload["agent_settings"] = agent_settings
     if enable_laminar:
         payload["secrets"]["LMNR_PROJECT_API_KEY"] = secret_source(
             "LAMINAR_API_KEY", LAMINAR_SECRET_LOOKUP_URL, key
@@ -292,6 +364,80 @@ def resolve_profile_ids(harnesses: tuple[str, ...]) -> dict[str, str]:
         harness: ids_by_name[PROFILE_NAMES[harness]]
         for harness in harnesses
     }
+
+
+def materialize_profile(profile_name: str) -> dict:
+    encoded = urllib.parse.quote(profile_name, safe="")
+    response = request_json("POST", f"/api/agent-profiles/{encoded}/materialize", {})
+    if not response.get("valid"):
+        raise RuntimeError(
+            f"Agent Canvas profile {profile_name!r} is invalid: "
+            f"{response.get('errors') or 'unknown materialization error'}"
+        )
+    settings = response.get("resolved_settings")
+    if not isinstance(settings, dict):
+        raise RuntimeError(
+            f"Agent Canvas profile {profile_name!r} did not return resolved settings"
+        )
+    return settings
+
+
+def resolve_curated_agent_settings(harnesses: tuple[str, ...]) -> dict[str, dict]:
+    """Build inline settings with the same current Canvas skill context.
+
+    Saved Agent Profiles are intentionally a server-side launch boundary. On
+    Agent Server 1.42.1, a native OpenHands profile materializes all public
+    skills while ACP profiles materialize none. For a controlled comparison we
+    source the current serialized catalog from the native profile, select the
+    Canvas 11-skill allow-list, and attach the identical objects to every
+    materialized harness setting.
+    """
+    catalog_settings = materialize_profile(PROFILE_NAMES["openhands"])
+    catalog_context = catalog_settings.get("agent_context") or {}
+    catalog_skills = catalog_context.get("skills") or []
+    skills_by_name = {
+        skill.get("name"): skill
+        for skill in catalog_skills
+        if isinstance(skill, dict) and isinstance(skill.get("name"), str)
+    }
+    missing = [name for name in CURATED_CANVAS_SKILLS if name not in skills_by_name]
+    if missing:
+        raise RuntimeError(
+            "Current Agent Canvas skill catalog is missing curated defaults: "
+            + ", ".join(missing)
+        )
+    curated = [copy.deepcopy(skills_by_name[name]) for name in CURATED_CANVAS_SKILLS]
+    key = api_key()
+
+    resolved: dict[str, dict] = {}
+    for harness in harnesses:
+        settings = copy.deepcopy(materialize_profile(PROFILE_NAMES[harness]))
+        if settings.get("agent_kind") == "openhands":
+            llm = settings.get("llm")
+            if not isinstance(llm, dict):
+                raise RuntimeError(
+                    f"OpenHands profile {PROFILE_NAMES[harness]!r} has no LLM settings"
+                )
+            # The materialize endpoint deliberately redacts the saved API key.
+            # Inline launches must resolve it just as Canvas does before posting
+            # agent_settings. This value remains in memory and is never stored
+            # in the result artifact or provider ledger.
+            llm["api_key"] = secret_value("LLM_API_KEY", SECRET_LOOKUP_URL, key)
+        context = settings.get("agent_context")
+        if not isinstance(context, dict):
+            context = {}
+            settings["agent_context"] = context
+        context.update(
+            {
+                "skills": copy.deepcopy(curated),
+                "load_public_skills": False,
+                "load_user_skills": True,
+                "load_project_skills": True,
+                "disabled_skills": [],
+            }
+        )
+        resolved[harness] = settings
+    return resolved
 
 
 def wait_for_terminal(conversation_ids: dict[str, str], timeout_seconds: int) -> dict[str, dict]:
@@ -654,6 +800,7 @@ def run_task(
     task_id: str,
     harnesses: tuple[str, ...],
     profile_ids: dict[str, str],
+    agent_settings: dict[str, dict] | None,
     enable_laminar: bool,
     timeout_seconds: int,
     repair_rounds: int,
@@ -686,7 +833,8 @@ def run_task(
             run_id,
             task_id,
             harness,
-            profile_ids[harness],
+            profile_ids.get(harness),
+            agent_settings.get(harness) if agent_settings else None,
             workspaces[harness],
             enable_laminar,
         )
@@ -780,6 +928,15 @@ def main() -> int:
         help="Add the existing Codex ACP profile using GPT-5.5.",
     )
     parser.add_argument(
+        "--skill-context",
+        choices=("profile-default", "canvas-curated"),
+        default="profile-default",
+        help=(
+            "Use saved-profile skill behavior, or materialize each profile and "
+            "inject Agent Canvas's pinned 11-skill current default into every harness."
+        ),
+    )
+    parser.add_argument(
         "--allow-laminar-content-export",
         action="store_true",
         help=(
@@ -818,7 +975,12 @@ def main() -> int:
         harnesses = tuple(dict.fromkeys(selected))
     else:
         harnesses = DEFAULT_HARNESSES + (("codex",) if args.include_codex else ())
-    profile_ids = resolve_profile_ids(harnesses)
+    if args.skill_context == "canvas-curated":
+        profile_ids: dict[str, str] = {}
+        agent_settings = resolve_curated_agent_settings(harnesses)
+    else:
+        profile_ids = resolve_profile_ids(harnesses)
+        agent_settings = None
     results = {
         "run_id": args.run_id,
         "suite_id": suite["suite_id"],
@@ -853,6 +1015,24 @@ def main() -> int:
         },
         "agent_canvas_version": "1.15.0",
         "agent_server_version": "1.42.1",
+        "skill_context": {
+            "mode": args.skill_context,
+            "source": (
+                "OpenHands/OpenHands#16860; @openhands/extensions 0.18.0"
+                if args.skill_context == "canvas-curated"
+                else "agent-profile server defaults"
+            ),
+            "count": (
+                len(CURATED_CANVAS_SKILLS)
+                if args.skill_context == "canvas-curated"
+                else None
+            ),
+            "names": (
+                list(CURATED_CANVAS_SKILLS)
+                if args.skill_context == "canvas-curated"
+                else None
+            ),
+        },
         "created_at": datetime.now().astimezone().isoformat(),
         "task_sha256": {
             "p09": hash_file(P09_TASKS),
@@ -878,6 +1058,7 @@ def main() -> int:
                 task_id,
                 harnesses,
                 profile_ids,
+                agent_settings,
                 args.allow_laminar_content_export,
                 args.timeout_seconds,
                 args.repair_rounds,

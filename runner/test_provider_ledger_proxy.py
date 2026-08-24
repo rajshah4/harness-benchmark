@@ -43,6 +43,26 @@ def test_extracts_usage_from_final_stream_chunk():
     }
 
 
+def test_extracts_usage_from_responses_completed_event():
+    body = b"\n".join(
+        [
+            b'event: response.output_text.delta',
+            b'data: {"type":"response.output_text.delta","delta":"private"}',
+            b'event: response.completed',
+            b'data: {"type":"response.completed","response":{"id":"resp-123","usage":{"input_tokens":42,"input_tokens_details":{"cached_tokens":30},"output_tokens":7}}}',
+        ]
+    )
+
+    assert response_usage_metadata(body, "text/event-stream") == (
+        "resp-123",
+        {
+            "input_tokens": 42,
+            "input_tokens_details": {"cached_tokens": 30},
+            "output_tokens": 7,
+        },
+    )
+
+
 def test_merges_anthropic_stream_usage_across_events():
     body = b"\n".join([
         b'data: {"type":"message_start","message":{"id":"msg-1","usage":{"input_tokens":10,"cache_read_input_tokens":30,"cache_creation_input_tokens":2}}}',

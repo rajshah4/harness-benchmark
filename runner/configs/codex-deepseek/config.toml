@@ -1,0 +1,12 @@
+model = "deepseek-v4-pro"
+model_provider = "openhands_ledger"
+model_context_window = 128000
+
+[model_providers.openhands_ledger]
+name = "OpenHands provider ledger"
+base_url = "http://127.0.0.1:4010/v1/codex-deepseek"
+env_key = "LLM_API_KEY"
+wire_api = "responses"
+request_max_retries = 4
+stream_max_retries = 5
+stream_idle_timeout_ms = 600000

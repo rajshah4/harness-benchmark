@@ -1,0 +1,6 @@
+{
+  "defaultProjectTrust": "always",
+  "quietStartup": true,
+  "defaultProvider": "openhands",
+  "defaultModel": "glm-5.2"
+}

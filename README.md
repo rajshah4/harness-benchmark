@@ -73,6 +73,7 @@ return comparable Sonnet costs, so they are not shown here.
 - [`results/incident-project.md`](results/incident-project.md): the full-stack incident project and verifier audit.
 - [`results/incident-repeat-trials.md`](results/incident-repeat-trials.md): repeated OpenHands GLM and Sonnet incident runs.
 - [`results/incident-sonnet-harness-comparison.md`](results/incident-sonnet-harness-comparison.md): Sonnet across harnesses and the controlled Pi cache-marker experiment.
+- [`results/current-main-calibration.md`](results/current-main-calibration.md): the 12-lane accounting and quality gate for the current-main, three-model follow-up.
 - [`results/commit0-comparison.md`](results/commit0-comparison.md): why the public Commit0 benchmark can favor OpenHands while these experiments find higher OpenHands resource use.
 - [`results/codex-control.md`](results/codex-control.md): the available Codex measurements and why they are kept outside the same-model table.
 - [`results/raw/`](results/raw/): sanitized per-run records.
