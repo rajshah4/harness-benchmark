@@ -34,6 +34,33 @@ All three harnesses used GLM-5.2 on a clean AWS instance.
 
 The long project shows why call count alone is not enough. Pi made fewer calls than OpenCode, but sent more context on each call and finished with higher token use and cost.
 
+### Same full-stack project with Sonnet 4.5
+
+We repeated the incident project with Sonnet to test whether the GLM-5.2
+pattern was a property of the harness alone. It was not.
+
+| Harness | Quality | Model calls | Input tokens | Cache rate | Time |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| OpenHands | 7/8 | 66 | 4,261,186 | 97.7% | 12m 24s |
+| OpenCode | 6/8 | 75 | 4,152,996 | 97.9% | 15m 52s |
+| Pi, default Sonnet configuration | 7/8 | 89 | 3,351,630 | 0.0% | 14m 44s |
+
+The ordering changed with the model. OpenHands needed 95 to 129 calls in its
+two GLM-5.2 trials, but only 66 with Sonnet. Pi moved in the other direction:
+69 calls with GLM-5.2 and 89 with Sonnet. OpenCode was nearly unchanged at 76
+and 75 calls. This points to a model-and-harness interaction, not a universal
+ranking of harnesses. Sonnet appears to be a particularly good match for how
+OpenHands structures its instructions, tools, and loop, although its shorter
+path still missed one frontend defect.
+
+Pi's zero Sonnet cache rate was also a compatibility issue rather than missing
+telemetry. Enabling Pi's documented Anthropic-style cache controls raised its
+cache rate to 94.5 percent, but it still made 89 calls. Caching improved fresh
+token usage, not the agent loop. See the
+[`Sonnet harness comparison`](results/incident-sonnet-harness-comparison.md)
+for the controlled cache repeat and sanitized evidence. The provider did not
+return comparable Sonnet costs, so they are not shown here.
+
 ## What is here
 
 - [`METHODOLOGY.md`](METHODOLOGY.md): experimental controls, token definitions, limitations, and reproduction procedure.
