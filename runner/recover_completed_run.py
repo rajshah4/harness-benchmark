@@ -42,6 +42,10 @@ def main() -> None:
     parser.add_argument("--conversation-id", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--verifier-python", required=True)
+    parser.add_argument(
+        "--execution-status",
+        help="Record a deliberate terminal classification instead of Canvas status.",
+    )
     args = parser.parse_args()
 
     path = EVIDENCE_ROOT / f"{args.run_id}.json"
@@ -58,7 +62,8 @@ def main() -> None:
                 args.harness: {
                     "conversation_id": args.conversation_id,
                     "conversation_url": f"{BASE_URL}/conversations/{args.conversation_id}",
-                    "execution_status": record.get("execution_status"),
+                    "execution_status": args.execution_status
+                    or record.get("execution_status"),
                     "workspace": str(args.workspace),
                     "baseline_tree": baseline_tree(args.workspace),
                     "verification": {

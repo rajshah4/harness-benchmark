@@ -92,6 +92,15 @@
       "sha256": "e5c871b499be71a2ceef112f1168959a696405f7abe60902aeedd0ca66a93ec1"
     },
     {
+      "file": "current-main-long-deepseek-pi-deepseek-20260824-v2.jsonl",
+      "run_id": "current-main-long-deepseek-pi-deepseek-20260824-v2",
+      "task": "incident-operations-center",
+      "harness": "pi-deepseek",
+      "model": "openhands/deepseek-v4-pro",
+      "event_count": 105,
+      "sha256": "e8bb7248e6e5a64b229b5f180a83c37593ff5d1854f9636c4567587058e6c32b"
+    },
+    {
       "file": "current-main-long-glm-codex-glm-20260824-v2.jsonl",
       "run_id": "current-main-long-glm-codex-glm-20260824-v2",
       "task": "incident-operations-center",

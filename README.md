@@ -129,6 +129,17 @@ still made 89 calls. Caching reduced fresh input, not the agent loop. See the
 for the controlled cache repeat and sanitized evidence. The provider did not
 return comparable Sonnet costs, so they are not shown here.
 
+### Current-main GLM-5.2 follow-up
+
+After OpenHands main reduced the default skill set to 11, we repeated the
+incident project with the same curated skill context across OpenHands, Pi,
+OpenCode, and Codex. OpenHands completed 8/8 in 8m 38s with 49 provider calls.
+Pi also completed 8/8 in 15m 41s with 69 calls. OpenCode finished in 13m 04s
+but missed one check. Codex completed 8/8 in 33m 06s with 168 calls and 10.93
+million provider input tokens. The full result and the DeepSeek compatibility
+failures are in the
+[`current-main incident follow-up`](results/current-main-incident-followup.md).
+
 ## What is here
 
 - [`METHODOLOGY.md`](METHODOLOGY.md): experimental controls, token definitions, limitations, and reproduction procedure.
@@ -142,6 +153,7 @@ return comparable Sonnet costs, so they are not shown here.
 - [`results/incident-repeat-trials.md`](results/incident-repeat-trials.md): repeated OpenHands GLM and Sonnet incident runs.
 - [`results/incident-sonnet-harness-comparison.md`](results/incident-sonnet-harness-comparison.md): Sonnet across harnesses and the controlled Pi cache-marker experiment.
 - [`results/current-main-calibration.md`](results/current-main-calibration.md): the 12-lane accounting and quality gate for the current-main, three-model follow-up.
+- [`results/current-main-incident-followup.md`](results/current-main-incident-followup.md): the current-main GLM incident results, DeepSeek compatibility failures, and evidence links.
 - [`results/commit0-comparison.md`](results/commit0-comparison.md): why the public Commit0 benchmark can favor OpenHands while these experiments find higher OpenHands resource use.
 - [`results/codex-control.md`](results/codex-control.md): the available Codex measurements and why they are kept outside the same-model table.
 - [`results/raw/`](results/raw/): sanitized per-run records.
