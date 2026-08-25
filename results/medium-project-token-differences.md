@@ -101,6 +101,35 @@ calls still costs more than 10 percent of a 10K prompt across 24 calls.
 Caching reduces the marginal cost of a large prompt; it does not eliminate
 the difference in call count.
 
+## The Durable Job Queue case: unused browser schemas on a backend task
+
+Durable Job Queue is the cleanest illustration of the browser-overhead
+problem. The task is pure backend — a SQLite-backed job store with states,
+retries, crash recovery, and a CLI. There is no frontend, no web server, no
+HTML. The verifier is a Python test suite with zero browser dependencies.
+
+OpenHands declared 14 browser tools on all 35 calls and made zero browser
+actions. The browser schemas contributed nothing to the solution. From the
+provider ledger:
+
+| Harness | Tools | Calls | Avg prompt | Total prompt | Result |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Pi | 4 | 18 | 17,700 | 318,592 | 10/10 pass |
+| OpenCode | 10 | 35 | 25,710 | 899,849 | 10/10 pass |
+| OpenHands | 22 (14 browser) | 35 | 35,814 | 1,253,493 | 8/10 (2 failed) |
+
+Each tool schema costs roughly 840 to 1,335 prompt tokens (estimated by
+interpolating across the three harnesses). The 14 browser schemas therefore
+add roughly 12,000 to 19,000 tokens per call. Over 35 calls, that is
+roughly 400,000 to 650,000 prompt tokens spent on browser schemas that
+were never used — approximately 33 to 52 percent of OpenHands' total prompt
+spend on this task. The midpoint estimate is about 493,000 tokens, or 39
+percent.
+
+Despite spending more than Pi and OpenCode combined, OpenHands failed two
+hidden durability checks. The browser overhead did not buy correctness; it
+bought prompt inflation on a task where the browser was irrelevant.
+
 ## Why Pi duplicates some commands
 
 One wrinkle: Pi retried 55 percent of its bash commands on Spread Plate
@@ -114,26 +143,21 @@ and call count were both small enough to absorb the duplication. Pi's
 inefficiency (retries) was smaller than OpenHands' inefficiency (large
 prompts, many calls).
 
-## The inversion on the long project
-
-On the full-stack Incident Operations Center project, the ordering reverses.
-Pi used 4.35M input tokens to OpenCode's 2.75M, despite Pi's smaller
-toolset. The reason is call count: on the long project Pi made 117 calls to
-OpenCode's 76. The per-call prompts were similar (37K vs 36K), so the
-longer task exposed Pi's higher call rate, which the shorter medium projects
-did not.
-
-This is the model-and-harness interaction noted in the
-[`README`](../README.md#same-full-stack-project-with-sonnet-45) results: the
-ordering of harnesses changes with task length. On short and medium tasks,
-Pi's small toolset and packed bash calls dominate. On the long project, the
-call-count advantage shifts to OpenCode.
-
 ## Trace and ledger references
 
-- Traces: [`results/traces/`](traces/) (files named `20260824-aws-long-projects-v2-*`)
-- Provider ledger: [`results/provider-ledgers/20260824-aws-long-projects-ledger.jsonl`](provider-ledgers/20260824-aws-long-projects-ledger.jsonl)
-- The `tool_count` field in each ledger record confirms the per-request tool
-  count (4 for Pi, 10 for OpenCode, 22 for OpenHands).
-- The `raw_usage.prompt_tokens` and `raw_usage.prompt_tokens_details.cached_tokens`
-  fields confirm the per-call prompt sizes and cache rates.
+Medium-project traces (in [`results/traces/`](traces/)):
+
+- Durable Job Queue:
+  [`openhands`](traces/20260824-aws-long-projects-v2-durable-job-queue-openhands.jsonl),
+  [`opencode`](traces/20260824-aws-long-projects-v2-durable-job-queue-opencode.jsonl),
+  [`pi`](traces/20260824-aws-long-projects-v2-durable-job-queue-pi.jsonl)
+- Spread Plate:
+  [`openhands`](traces/20260824-aws-long-projects-v2-artifactsbench-spread-plate-openhands.jsonl),
+  [`opencode`](traces/20260824-aws-long-projects-v2-artifactsbench-spread-plate-opencode.jsonl),
+  [`pi`](traces/20260824-aws-long-projects-v2-artifactsbench-spread-plate-pi.jsonl)
+
+Provider ledger: [`results/provider-ledgers/20260824-aws-long-projects-ledger.jsonl`](provider-ledgers/20260824-aws-long-projects-ledger.jsonl).
+The `tool_count` field confirms the per-request tool count (4 for Pi, 10 for
+OpenCode, 22 for OpenHands). The `raw_usage.prompt_tokens` and
+`raw_usage.prompt_tokens_details.cached_tokens` fields confirm the per-call
+prompt sizes and cache rates.
