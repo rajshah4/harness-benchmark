@@ -24,6 +24,34 @@ All three harnesses used GLM-5.2 on a clean AWS instance.
 | OpenCode | 2/2 | 55 | 1,270,896 | 738 s | $0.480 |
 | OpenHands | 1/2 | 65 | 2,167,646 | 782 s | $0.725 |
 
+### Why Pi used fewer tokens on medium projects
+
+Pi used roughly half the tokens of OpenCode and a quarter of OpenHands on
+the two medium projects. The provider ledger shows the cause: each harness
+declares a different number of tools to the model on every call, and that
+drives the per-call prompt size.
+
+| Harness | Tools per call | Avg prompt | Calls (spread-plate) | Total tokens |
+| --- | ---: | ---: | ---: | ---: |
+| Pi | 4 | 10,596 | 24 | 254,314 |
+| OpenCode | 10 | 18,788 | 42 | 789,088 |
+| OpenHands | 22 (14 browser) | 30,249 | 63 | 1,905,661 |
+
+Each tool schema costs roughly 1,000 to 1,400 prompt tokens. Pi's 4-tool
+harness sends the smallest prompt; OpenHands' 22-tool harness (including
+14 browser functions) sends the largest. Neither medium task required the
+agent to use a browser — Durable Job Queue is pure backend, and Spread
+Plate is a static web app the agent builds by writing files (its verifier
+uses Playwright, but the agent does not). OpenHands made zero browser
+actions on Durable Job Queue and one on Spread Plate, yet paid for 14
+browser schemas on all 101 calls. Pi also makes fewer calls because
+it packs multiple commands into single bash invocations, where OpenHands
+uses one model call per command. The two factors compound: 2.6x more calls
+times 2.9x larger prompts produces the 7.5x total-token gap. Caching helps
+all three harnesses similarly and cannot close it. The deeper analysis,
+including why the ordering inverts on the long project, is in
+[`results/medium-project-token-differences.md`](results/medium-project-token-differences.md).
+
 ### Full-stack incident project
 
 | Harness | Contract-adjusted quality | Model calls | Input tokens | Time | Provider cost |

@@ -23,4 +23,14 @@ browser tool drove a large share of the token, time, and correctness
 differences across the GLM-5.2, Sonnet, OpenCode, and current-main
 conditions on the incident project.
 
+The [`browser-tool-audit.md`](browser-tool-audit.md) report documents that
+neither medium task required a browser, with a trace-by-trace audit showing
+browser tool declaration versus actual usage.
+
+The [`medium-project-token-differences.md`](medium-project-token-differences.md)
+report explains the 4x token gap between Pi and OpenHands on the two medium
+projects, using the provider ledger's per-call `tool_count` and prompt
+tokens to decompose the difference into tool-count-driven per-call prompt
+size and call-count-driven total volume.
+
 The [`traces/`](traces/) directory contains complete sanitized Canvas event streams for the accepted long-project runs. It omits deployment metadata and invalid attempts. See its README and manifest for the exact inclusion and redaction rules.
