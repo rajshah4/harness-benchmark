@@ -18,4 +18,9 @@ The [`incident-sonnet-harness-comparison.md`](incident-sonnet-harness-comparison
 report compares Sonnet across OpenHands, Pi, and OpenCode, then isolates Pi's
 missing Sonnet cache markers with a cache-enabled repeat.
 
+The [`browser-tool-impact.md`](browser-tool-impact.md) report traces how the
+browser tool drove a large share of the token, time, and correctness
+differences across the GLM-5.2, Sonnet, OpenCode, and current-main
+conditions on the incident project.
+
 The [`traces/`](traces/) directory contains complete sanitized Canvas event streams for the accepted long-project runs. It omits deployment metadata and invalid attempts. See its README and manifest for the exact inclusion and redaction rules.

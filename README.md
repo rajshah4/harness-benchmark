@@ -53,6 +53,46 @@ ranking of harnesses. Sonnet appears to be a particularly good match for how
 OpenHands structures its instructions, tools, and loop, although its shorter
 path still missed one frontend defect.
 
+## The browser tool and token usage
+
+A large share of the token, time, and correctness differences above comes
+down to one harness-level choice: whether the browser tool is in the prompt
+at all. The full-stack incident project requires a browser interface, so it
+isolates this effect cleanly. The same pattern appears across four
+conditions:
+
+| Condition | Declared tools | Browser actions | Input tokens | Time |
+| --- | ---: | ---: | ---: | ---: |
+| OpenHands + GLM-5.2, original | 22 (15 browser) | 17, mostly failing | 6.76M | ~26.7 min |
+| OpenHands + Sonnet 4.5 | 21 (14 browser) | 0, never invoked | 4.26M | ~12.4 min |
+| OpenCode + GLM-5.2 | ~5, no browser | 0 | 2.75M | ~17.7 min |
+| OpenHands + GLM-5.2, current-main | 9, browser removed | 0 | see ledger | ~8.6 min |
+
+What happened in each condition:
+
+- **GLM-5.2, originally**, OpenHands declared a 14-function browser toolset in
+  every prompt and then the browser mostly failed at runtime: cold-start
+  timeouts and extraction errors pushed the agent into retry loops. The
+  browser consumed ~21 percent of wall-clock and most of it failed against
+  the tool, not the application.
+- **With Sonnet 4.5**, the same browser schemas sat in every prompt but the
+  model never invoked them. Sonnet substituted a shallow `curl | grep`
+  presence check, ran in half the time and half the tokens, but missed one
+  frontend check the browser would have caught.
+- **OpenCode** never declared a browser at all. Its five-tool harness carried
+  no browser overhead, and it verified the frontend with per-marker
+  completeness checks in inline Python. It finished 8/8 at 2.75M input tokens.
+- **When the browser tool was removed** (current-main), OpenHands + GLM-5.2
+  converged on the same no-browser verification pattern OpenCode used, and
+  ran in roughly a third of the original time.
+
+The practical reading: a tool is not just a capability the agent may use. It
+is also a fixed per-call prompt cost paid on every turn, and if the tool is
+unreliable, a behavioral cost paid in retries. On this task, for OpenHands,
+the browser was a net cost on both axes, not a net capability. The deeper
+analysis, with trace references and the test-file-edit caveat for OpenCode,
+is in [`results/browser-tool-impact.md`](results/browser-tool-impact.md).
+
 Pi initially received zero cache reads because its Sonnet requests did not
 include Anthropic-style cache controls. The table uses the controlled Pi
 rerun with those controls enabled. Its cache rate reached 94.5 percent, but it
