@@ -95,7 +95,10 @@ CURATED_CANVAS_SKILLS = (
     "skill-creator",
 )
 
-TERMINAL_STATUSES = {"finished", "error", "stopped"}
+# Agent Server's stuck detector has already stopped the agent loop.  Treat it
+# as terminal so a benchmark records the failed attempt and the sequential
+# matrix can proceed instead of waiting for its wall-clock timeout.
+TERMINAL_STATUSES = {"finished", "error", "stopped", "stuck"}
 
 CODEX_CONFIG_DIRS = {
     "codex-glm": Path(__file__).resolve().parent / "configs" / "codex-glm",

@@ -49,8 +49,11 @@ def is_completed_result(path: Path, harness: str) -> bool:
         cell = payload["tasks"][0]["harnesses"][harness]
     except (IndexError, KeyError, TypeError, json.JSONDecodeError):
         return False
-    return cell.get("execution_status") == "finished" and isinstance(
-        cell.get("verification", {}).get("first_pass"), bool
+    # A terminal failure is a result too: retaining it prevents an automatic
+    # retry from quietly replacing evidence with a different paid attempt.
+    return (
+        cell.get("execution_status") in {"finished", "error", "stopped", "stuck"}
+        and isinstance(cell.get("verification", {}).get("first_pass"), bool)
     )
 
 
