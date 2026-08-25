@@ -32,25 +32,29 @@ exact number rather than inferring it.
 | OpenCode | 10 | 0 | 18,788 |
 | OpenHands | 22 | 14 | 30,249 |
 
-Each tool schema costs roughly 1,000 to 1,400 prompt tokens. The per-call
-prompt decomposes as a fixed base (the system prompt and task description,
-roughly 5,000 to 9,000 tokens) plus a variable component that scales with
-tool count. OpenHands pays for 22 tool schemas on every call; Pi pays for 4.
+The per-call prompt decomposes as a fixed base (the system prompt and task
+description, roughly 5,000 to 9,000 tokens) plus the tool schemas. OpenHands
+pays for 22 tool schemas on every call; Pi pays for 4. The 14 browser
+schemas alone are 2,152 tokens (see the Durable Job Queue case study below);
+the remaining 8 non-browser schemas are larger because they include full
+JSON parameter definitions.
 
-The browser toolset is the largest single contributor. OpenHands declares 14
+The browser toolset is the largest single extra payload. OpenHands declares 14
 browser functions (navigate, click, get_state, get_content, type, scroll,
 go_back, list_tabs, switch_tab, close_tab, get_storage, set_storage,
-start_recording, stop_recording) on every call. Neither medium task required
+start_recording, stop_recording) on every call. These 14 schemas total 8,938
+characters, which is 2,152 tokens under cl100k_base, and the browser usage
+instructions in the system prompt add another 184 tokens. That is 2,336
+tokens of fixed browser overhead per call. Neither medium task required
 the agent to use a browser. Durable Job Queue is a pure backend SQLite task
 with no frontend at all; its verifier has zero browser dependencies. Spread
 Plate is a static web app that the agent builds by writing files, and while
 its verifier uses Playwright to check the result, the agent does not need a
 browser tool to build or self-verify the artifact. OpenHands made zero
 browser actions on Durable Job Queue and exactly one on Spread Plate (a
-single navigate to localhost for self-verification). The 14 browser schemas
-were sent on all 98 calls regardless. This is the same fixed-overhead
-effect documented in [`browser-tool-impact.md`](browser-tool-impact.md),
-and on the medium projects it is the largest component of the per-call gap.
+single navigate to localhost for self-verification). The 2,336-token browser
+payload was sent on all 98 calls regardless — fixed dead weight that the
+model never benefited from on either task.
 
 ## Factor two: call count drives total volume
 
@@ -118,17 +122,17 @@ provider ledger:
 | OpenCode | 10 | 35 | 25,710 | 899,849 | 10/10 pass |
 | OpenHands | 22 (14 browser) | 35 | 35,814 | 1,253,493 | 8/10 (2 failed) |
 
-Each tool schema costs roughly 840 to 1,335 prompt tokens (estimated by
-interpolating across the three harnesses). The 14 browser schemas therefore
-add roughly 12,000 to 19,000 tokens per call. Over 35 calls, that is
-roughly 400,000 to 650,000 prompt tokens spent on browser schemas that
-were never used — approximately 33 to 52 percent of OpenHands' total prompt
-spend on this task. The midpoint estimate is about 493,000 tokens, or 39
-percent.
+The browser overhead is a fixed constant on every call: the 14 browser tool
+schemas total 8,938 characters (2,152 tokens under cl100k_base), and the
+browser usage instructions in the system prompt add another 184 tokens. That
+is 2,336 tokens per call — the same on call 1 and call 35, since the schemas
+and system prompt do not change. Over 35 calls, the unused browser payload
+cost roughly 81,800 tokens, or about 6.5 percent of OpenHands' total prompt
+spend on this task.
 
 Despite spending more than Pi and OpenCode combined, OpenHands failed two
 hidden durability checks. The browser overhead did not buy correctness; it
-bought prompt inflation on a task where the browser was irrelevant.
+was fixed dead weight on a task where the browser was irrelevant.
 
 ## Why Pi duplicates some commands
 

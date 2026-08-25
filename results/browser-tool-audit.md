@@ -87,11 +87,12 @@ Key observations:
 
 Durable Job Queue is the cleanest illustration. The task is pure backend —
 a SQLite-backed job store with no frontend. OpenHands declared 14 browser
-tools on all 35 calls and made zero browser actions. Each browser schema
-costs roughly 840 to 1,335 prompt tokens, so the 14 unused schemas added
-roughly 12,000 to 19,000 tokens per call. Over 35 calls, that is roughly
-400,000 to 650,000 tokens (about 33 to 52 percent of OpenHands' total
-prompt spend) spent on browser schemas that were never invoked.
+tools on all 35 calls and made zero browser actions. The browser overhead is
+a fixed constant on every call: the 14 browser tool schemas total 8,938
+characters (2,152 tokens under cl100k_base) plus 184 tokens of browser usage
+instructions in the system prompt, for 2,336 tokens per call. Over 35 calls,
+the unused browser payload cost roughly 81,800 tokens — about 6.5 percent of
+OpenHands' total prompt spend.
 
 Despite this overhead, OpenHands failed two hidden durability checks (8/10)
 while Pi and OpenCode both passed 10/10 with zero browser tools. The full
@@ -109,7 +110,7 @@ every call, regardless of the task.
 The browser is not task-conditional. OpenHands does not inspect the task
 description and decide whether to include browser tools. It declares the same
 22-tool set for a pure backend SQLite store and for a static web app. The
-result is that 14 browser schemas (roughly 12,000 to 19,000 prompt tokens)
+result is that 14 browser schemas (2,152 tokens, measured under cl100k_base)
 are sent on every call even when the task has no browser interaction.
 
 When the browser was used on Spread Plate, it was used for self-verification:
