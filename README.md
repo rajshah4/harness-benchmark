@@ -44,7 +44,7 @@ agent to use a browser — Durable Job Queue is pure backend, and Spread
 Plate is a static web app the agent builds by writing files (its verifier
 uses Playwright, but the agent does not). OpenHands made zero browser
 actions on Durable Job Queue and one on Spread Plate, yet paid for 14
-browser schemas on all 101 calls. Pi also makes fewer calls because
+browser schemas on all 98 calls. Pi also makes fewer calls because
 it packs multiple commands into single bash invocations, where OpenHands
 uses one model call per command. The two factors compound: 2.6x more calls
 times 2.9x larger prompts produces the 7.5x total-token gap. Caching helps

@@ -70,7 +70,7 @@ self-verification pattern).
 
 Key observations:
 
-- **OpenHands declared 14 browser tools on every call** (38 calls on Durable
+- **OpenHands declared 14 browser tools on every call** (35 calls on Durable
   Job Queue, 63 on Spread Plate). This is the default tool configuration.
 - **On Durable Job Queue, the browser was never used.** 14 schemas in every
   prompt, zero actions, zero benefit.
@@ -109,7 +109,7 @@ every call, regardless of the task.
 The browser is not task-conditional. OpenHands does not inspect the task
 description and decide whether to include browser tools. It declares the same
 22-tool set for a pure backend SQLite store and for a static web app. The
-result is that 14 browser schemas (roughly 14,000 to 20,000 prompt tokens)
+result is that 14 browser schemas (roughly 12,000 to 19,000 prompt tokens)
 are sent on every call even when the task has no browser interaction.
 
 When the browser was used on Spread Plate, it was used for self-verification:

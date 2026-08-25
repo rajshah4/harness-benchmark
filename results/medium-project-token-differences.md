@@ -48,7 +48,7 @@ its verifier uses Playwright to check the result, the agent does not need a
 browser tool to build or self-verify the artifact. OpenHands made zero
 browser actions on Durable Job Queue and exactly one on Spread Plate (a
 single navigate to localhost for self-verification). The 14 browser schemas
-were sent on all 101 calls regardless. This is the same fixed-overhead
+were sent on all 98 calls regardless. This is the same fixed-overhead
 effect documented in [`browser-tool-impact.md`](browser-tool-impact.md),
 and on the medium projects it is the largest component of the per-call gap.
 
