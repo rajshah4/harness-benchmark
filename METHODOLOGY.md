@@ -28,6 +28,10 @@ The independent variable was the coding harness:
 - Pi through ACP
 - OpenCode through ACP
 
+The concrete Pi and OpenCode profile commands, model configuration, launch
+path, skill-context normalization, and accounting boundary are documented in
+[`docs/acp-harness-integration.md`](docs/acp-harness-integration.md).
+
 Codex is documented separately because the available control used GPT-5.5 rather than GLM-5.2.
 
 ## Current-main follow-up matrix

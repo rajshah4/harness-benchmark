@@ -146,6 +146,7 @@ failures are in the
 
 - [`METHODOLOGY.md`](METHODOLOGY.md): experimental controls, token definitions, limitations, and reproduction procedure.
 - [`BENCHMARK_RESULTS.md`](BENCHMARK_RESULTS.md): consolidated harness × agent-architecture results.
+- [`docs/acp-harness-integration.md`](docs/acp-harness-integration.md): how Pi and OpenCode were added as custom ACP harnesses.
 - [`REPLICATION-CAVEATS.md`](REPLICATION-CAVEATS.md): practical failure modes and checks for reproducing the benchmark.
 - [`benchmark/`](benchmark/): prompts, starting repositories, and external verifiers.
 - [`runner/`](runner/): Agent Canvas runner, provider-boundary ledger, calibration checks, and tests.
