@@ -1,0 +1,4 @@
+const list=document.querySelector("#shipments"),feedback=document.querySelector("#feedback"),form=document.querySelector("#tenant-form");
+async function refresh(){feedback.textContent="Loading…";const tenant=new FormData(form).get("tenant");const response=await fetch(`/api/shipments?tenant=${encodeURIComponent(tenant)}`);const rows=await response.json();list.replaceChildren(...rows.map(render));feedback.textContent=rows.length?`${rows.length} shipment(s)`:"No shipments";}
+function render(row){const article=document.createElement("article"),title=document.createElement("h2"),meta=document.createElement("p");title.textContent=row.reference;meta.textContent=`${row.status} · ${row.last_location||"No location"}`;article.append(title,meta);return article;}
+form.addEventListener("submit",event=>{event.preventDefault();refresh();});refresh();

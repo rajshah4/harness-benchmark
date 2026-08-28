@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Incident Operations Center</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div id="app" data-testid="incident-app">
+
+      <header class="app-header">
+        <div class="header-brand">
+          <span class="eyebrow">Operations</span>
+          <h1>Incident Center</h1>
+        </div>
+        <button class="btn-icon" id="refresh-btn" aria-label="Refresh" title="Refresh">&#8635;</button>
+      </header>
+
+      <!-- Summary bar -->
+      <section class="summary-bar" data-testid="summary" aria-label="Summary">
+        <div class="summary-card" id="sum-total"><span class="sum-num" id="sum-total-n">0</span><span class="sum-label">Total</span></div>
+        <div class="summary-card open" id="sum-open"><span class="sum-num" id="sum-open-n">0</span><span class="sum-label">Open</span></div>
+        <div class="summary-card ack" id="sum-ack"><span class="sum-num" id="sum-ack-n">0</span><span class="sum-label">Ack'd</span></div>
+        <div class="summary-card resolved" id="sum-res"><span class="sum-num" id="sum-res-n">0</span><span class="sum-label">Resolved</span></div>
+        <div class="summary-card p1" id="sum-p1"><span class="sum-num" id="sum-p1-n">0</span><span class="sum-label">P1</span></div>
+        <div class="summary-card p2" id="sum-p2"><span class="sum-num" id="sum-p2-n">0</span><span class="sum-label">P2</span></div>
+        <div class="summary-card p3" id="sum-p3"><span class="sum-num" id="sum-p3-n">0</span><span class="sum-label">P3</span></div>
+        <div class="summary-card p4" id="sum-p4"><span class="sum-num" id="sum-p4-n">0</span><span class="sum-label">P4</span></div>
+      </section>
+
+      <!-- Filters -->
+      <div class="filters" role="search" aria-label="Incident filters">
+        <label class="filter-label">
+          Status
+          <select id="status-filter" data-testid="status-filter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="open">Open</option>
+            <option value="acknowledged">Acknowledged</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </label>
+        <label class="filter-label">
+          Severity
+          <select id="severity-filter" data-testid="severity-filter" aria-label="Filter by severity">
+            <option value="">All severities</option>
+            <option value="P1">P1</option>
+            <option value="P2">P2</option>
+            <option value="P3">P3</option>
+            <option value="P4">P4</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Main area -->
+      <div class="workspace">
+        <!-- Incident list -->
+        <section class="incident-list-pane" aria-label="Incidents">
+          <div id="incident-list" data-testid="incident-list" role="list"></div>
+          <p id="empty-msg" class="empty-msg hidden">No incidents match the current filters.</p>
+        </section>
+
+        <!-- Detail pane -->
+        <aside id="detail-pane" class="detail-pane hidden" aria-label="Incident detail">
+          <div data-testid="incident-detail" id="incident-detail">
+            <div class="detail-header">
+              <div>
+                <span id="detail-sev" class="sev-badge"></span>
+                <span id="detail-status" class="status-badge"></span>
+              </div>
+              <button class="btn-icon close-btn" id="close-detail" aria-label="Close detail">&times;</button>
+            </div>
+            <h2 id="detail-title" class="detail-title"></h2>
+            <dl class="detail-meta">
+              <dt>ID</dt><dd id="detail-id" class="mono"></dd>
+              <dt>Fingerprint</dt><dd id="detail-fp" class="mono"></dd>
+              <dt>Alert count</dt><dd id="detail-count"></dd>
+              <dt>Escalation level</dt><dd id="detail-esc"></dd>
+              <dt>SLA deadline</dt><dd id="detail-sla"></dd>
+              <dt>Created</dt><dd id="detail-created"></dd>
+              <dt>Updated</dt><dd id="detail-updated"></dd>
+            </dl>
+
+            <!-- Actions -->
+            <div class="actions-section">
+              <div class="owner-row">
+                <input
+                  type="text"
+                  id="owner-input"
+                  data-testid="owner-input"
+                  placeholder="Assign owner…"
+                  aria-label="Owner"
+                  class="owner-input"
+                >
+                <button class="btn-secondary" id="assign-btn">Assign</button>
+              </div>
+              <div class="status-actions">
+                <button class="btn-ack" id="acknowledge-btn" data-testid="acknowledge-action">Acknowledge</button>
+                <button class="btn-resolve" id="resolve-btn" data-testid="resolve-action">Resolve</button>
+              </div>
+            </div>
+
+            <!-- Audit timeline -->
+            <section class="timeline-section" aria-label="Audit timeline">
+              <h3>Timeline</h3>
+              <ol id="timeline" data-testid="timeline" class="timeline" reversed></ol>
+            </section>
+          </div>
+        </aside>
+      </div><!-- .workspace -->
+
+    </div><!-- #app -->
+
+    <!-- Feedback toast -->
+    <div id="feedback" data-testid="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+

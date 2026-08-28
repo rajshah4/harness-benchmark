@@ -30,6 +30,7 @@ RATE_LIMITER_DIR = BENCHMARK / "rate-limiter"
 SPREAD_PLATE_DIR = BENCHMARK / "spread-plate"
 DURABLE_QUEUE_DIR = BENCHMARK / "durable-job-queue"
 INCIDENT_OPS_DIR = BENCHMARK / "incident-operations-center"
+FREIGHT_TOWER_DIR = BENCHMARK / "freight-control-tower"
 RUNS_ROOT = ROOT / "benchmark-runs"
 EVIDENCE_ROOT = ROOT / "results" / "raw" / "generated"
 PI_SESSION_ROOTS = (
@@ -54,6 +55,8 @@ PROFILE_NAMES = {
     "openhands-sonnet": "Sonnet",
     "pi-sonnet": "ODSC-Pi-Sonnet",
     "opencode-sonnet": "ODSC-OpenCode-Sonnet",
+    "openhands-sonnet46": "Sonnet46",
+    "pi-sonnet46": "ODSC-Pi-Sonnet46",
     "openhands-deepseek": "DeepSeek-V4",
     "pi-deepseek": "ODSC-Pi-DeepSeekV4",
     "opencode-deepseek": "ODSC-OpenCode-DeepSeekV4",
@@ -70,6 +73,8 @@ HARNESS_MODELS = {
     "openhands-sonnet": "openhands/claude-sonnet-4-5-20250929",
     "pi-sonnet": "openhands/claude-sonnet-4-5-20250929",
     "opencode-sonnet": "openhands/claude-sonnet-4-5-20250929",
+    "openhands-sonnet46": "openhands/claude-sonnet-4-6",
+    "pi-sonnet46": "openhands/claude-sonnet-4-6",
     "openhands-deepseek": "openhands/deepseek-v4-pro",
     "pi-deepseek": "openhands/deepseek-v4-pro",
     "opencode-deepseek": "openhands/deepseek-v4-pro",
@@ -233,6 +238,8 @@ def task_prompt(task_id: str) -> str:
         base = (DURABLE_QUEUE_DIR / "task.md").read_text(encoding="utf-8")
     elif task_id == "incident-operations-center":
         base = (INCIDENT_OPS_DIR / "task.md").read_text(encoding="utf-8")
+    elif task_id == "freight-control-tower":
+        base = (FREIGHT_TOWER_DIR / "task.md").read_text(encoding="utf-8")
     else:
         base = load_p09_prompts()[task_id]
     return (
@@ -257,6 +264,13 @@ def prepare_workspace(run_id: str, task_id: str, harness: str) -> tuple[Path, st
                 shutil.copy2(item, destination)
     elif task_id == "incident-operations-center":
         for item in (INCIDENT_OPS_DIR / "starter").iterdir():
+            destination = workspace / item.name
+            if item.is_dir():
+                shutil.copytree(item, destination)
+            else:
+                shutil.copy2(item, destination)
+    elif task_id == "freight-control-tower":
+        for item in (FREIGHT_TOWER_DIR / "starter").iterdir():
             destination = workspace / item.name
             if item.is_dir():
                 shutil.copytree(item, destination)
@@ -474,6 +488,12 @@ def verify(task_id: str, workspace: Path, verifier_python: str) -> tuple[bool, s
         command = [
             verifier_python,
             str(INCIDENT_OPS_DIR / "verify_incident_ops.py"),
+            str(workspace),
+        ]
+    elif task_id == "freight-control-tower":
+        command = [
+            verifier_python,
+            str(FREIGHT_TOWER_DIR / "verify_freight_control_tower.py"),
             str(workspace),
         ]
     else:
@@ -751,7 +771,21 @@ def event_metrics(events: list[dict], harness: str, workspace: Path) -> dict:
 
 def diff_metrics(workspace: Path) -> dict:
     status = run_command(["git", "status", "--short"], workspace).stdout.splitlines()
-    diff = run_command(["git", "diff", "--numstat", "HEAD"], workspace).stdout.splitlines()
+    # Agents may commit their work. Compare with the controller-created root
+    # commit, not the moving HEAD, or a fully implemented candidate can appear
+    # to contain zero changed files and zero additions.
+    roots = run_command(
+        ["git", "rev-list", "--max-parents=0", "HEAD"], workspace
+    ).stdout.splitlines()
+    if len(roots) != 1:
+        raise RuntimeError(f"expected one benchmark root commit, found {roots!r}")
+    baseline_commit = roots[0]
+    committed_changes = run_command(
+        ["git", "diff", "--name-status", baseline_commit], workspace
+    ).stdout.splitlines()
+    diff = run_command(
+        ["git", "diff", "--numstat", baseline_commit], workspace
+    ).stdout.splitlines()
     additions = 0
     deletions = 0
     for line in diff:
@@ -766,7 +800,8 @@ def diff_metrics(workspace: Path) -> dict:
         if path.is_file():
             additions += len(path.read_text(encoding="utf-8", errors="ignore").splitlines())
     return {
-        "changed_files": status,
+        "changed_files": committed_changes + status,
+        "baseline_commit": baseline_commit,
         "additions": additions,
         "deletions": deletions,
     }
@@ -987,7 +1022,14 @@ def main() -> int:
     results = {
         "run_id": args.run_id,
         "suite_id": suite["suite_id"],
-        "model": suite["model"],
+        # The suite file describes the original GLM panel. A filtered Sonnet
+        # run must record the model actually selected for its harnesses.
+        "model": (
+            next(iter({HARNESS_MODELS[harness] for harness in harnesses}))
+            if len({HARNESS_MODELS[harness] for harness in harnesses}) == 1
+            else "mixed"
+        ),
+        "suite_declared_model": suite["model"],
         "telemetry": (
             {
                 "backend": "laminar-otel",

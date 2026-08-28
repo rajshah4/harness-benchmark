@@ -1,0 +1,25 @@
+{
+  "harness": "openhands",
+  "task": "csvq",
+  "condition": "system",
+  "model": "GLM-5.2",
+  "score": "100.0%",
+  "cases_passed": 49,
+  "cases_total": 49,
+  "weighted_passed": 84,
+  "weighted_total": 84,
+  "result": "PASS",
+  "comparison_to_single_agent": "+3.6 points (96.4% -> 100.0%)",
+  "sandbox_id": "7S5VxXwQhLJkWmxuArmqWT",
+  "implementer_conversation": "98f678a47fb344728639e95162abfa92",
+  "validator_conversation": "0f82ec79113e4b2f9148b1cbfda0c920",
+  "grading_conversation": "1041ba6818d74322a48cbf70ae792cd8",
+  "notes": [
+    "Validator built 100-case instrument by probing oracle",
+    "Instrument caught 3 exit-code mismatches: edge-help, edge-help-short, edge-help-cmd",
+    "Orchestrator sent behavioral feedback to implementer (case IDs + mismatch type only)",
+    "Implementer fixed --help/-h/help to exit 0, matching oracle",
+    "Implementer's own self-verification (fuzzing) had already fixed sort-age-reverse-short",
+    "System condition reached 100% via multi-agent coordination"
+  ]
+}

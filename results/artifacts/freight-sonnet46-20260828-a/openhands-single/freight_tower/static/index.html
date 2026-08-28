@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Freight Control Tower</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main>
+  <!-- Login screen -->
+  <section id="login-screen">
+    <header>
+      <p class="eyebrow">Network operations</p>
+      <h1>Freight control tower</h1>
+      <p>Sign in with your bearer token to access the operations board.</p>
+    </header>
+    <form id="login-form" aria-label="Sign in">
+      <label>
+        Bearer token
+        <input id="token-input" type="password" autocomplete="current-password"
+               placeholder="Paste your token here" required>
+      </label>
+      <button type="submit">Sign in</button>
+      <p id="login-feedback" role="alert" class="feedback"></p>
+    </form>
+  </section>
+
+  <!-- Dashboard (hidden until signed in) -->
+  <section id="dashboard" hidden>
+    <header class="dash-header">
+      <div>
+        <p class="eyebrow">Network operations</p>
+        <h1>Freight control tower</h1>
+      </div>
+      <button id="sign-out-btn" class="secondary">Sign out</button>
+    </header>
+
+    <!-- Filters -->
+    <div class="filter-bar" role="search">
+      <label>
+        Status
+        <select id="filter-status">
+          <option value="">All</option>
+          <option value="created">Created</option>
+          <option value="in_transit">In transit</option>
+          <option value="delayed">Delayed</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </label>
+      <label>
+        Severity
+        <select id="filter-severity">
+          <option value="">All</option>
+          <option value="P1">P1</option>
+          <option value="P2">P2</option>
+          <option value="P3">P3</option>
+        </select>
+      </label>
+      <label>
+        Assignee
+        <input id="filter-assignee" type="text" placeholder="Any">
+      </label>
+      <button id="refresh-btn">Refresh</button>
+    </div>
+
+    <p id="board-feedback" role="status" class="feedback"></p>
+
+    <div class="board">
+      <!-- Shipments column -->
+      <div class="column">
+        <h2>Shipments</h2>
+        <div id="shipments-list" aria-label="Shipments" aria-live="polite"></div>
+      </div>
+
+      <!-- Exceptions column -->
+      <div class="column">
+        <h2>Exceptions</h2>
+        <div id="exceptions-list" aria-label="Exceptions" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- Exception detail modal -->
+    <dialog id="exc-dialog" aria-modal="true" aria-labelledby="exc-dialog-title">
+      <h2 id="exc-dialog-title">Exception</h2>
+      <div id="exc-detail"></div>
+
+      <form id="exc-mutate-form" aria-label="Mutate exception">
+        <div class="form-row">
+          <label>Action
+            <select id="exc-action">
+              <option value="acknowledge">Acknowledge</option>
+              <option value="assign">Assign</option>
+              <option value="add_note">Add note</option>
+              <option value="resolve">Resolve</option>
+            </select>
+          </label>
+          <label id="assignee-group" hidden>Assignee
+            <input id="exc-assignee" type="text">
+          </label>
+          <label id="note-group" hidden>Note
+            <textarea id="exc-note" rows="2"></textarea>
+          </label>
+          <label>Actor
+            <input id="exc-actor" type="text" placeholder="Your name">
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit">Apply</button>
+          <button type="button" id="close-dialog-btn" class="secondary">Cancel</button>
+        </div>
+        <p id="mutate-feedback" role="alert" class="feedback"></p>
+      </form>
+    </dialog>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

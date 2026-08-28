@@ -1,0 +1,636 @@
+{
+  "run_id": "completion-sonnet46-20260828-e",
+  "experiment": "completion-loop-app/v1",
+  "model": "openhands/claude-sonnet-4-6",
+  "provider": "OpenHands hosted LLM provider",
+  "task": "incident-operations-center",
+  "created_at": "2026-08-28T16:18:43.446310+00:00",
+  "controls": {
+    "aws_host": true,
+    "skill_source": "OpenHands/OpenHands#16860; @openhands/extensions 0.18.0",
+    "skill_names": [
+      "add-skill",
+      "agent-canvas-environment",
+      "agent-memory",
+      "agent-sdk-builder",
+      "code-review",
+      "docker",
+      "github",
+      "openhands-api",
+      "openhands-automation",
+      "openhands-sdk",
+      "skill-creator"
+    ],
+    "task_sha256": "863be355e211a5139c94cc2bd18a9ad2ba9ae0d7f91b41b5daf90bb35fbff49a",
+    "verifier_sha256": "9c9cbfdaf5ac9699add2688c7b9b00841f45750b2720bbf086d9b190063dd843",
+    "system_information_wall": "separate LocalWorkspace directories; operational, not cryptographic",
+    "system_max_repairs": 2
+  },
+  "conditions": {
+    "openhands-single": {
+      "conversation_id": "c2d902d8-2793-452f-9ede-14a165af5c48",
+      "conversation_url": "http://localhost:8000/conversations/c2d902d8-2793-452f-9ede-14a165af5c48",
+      "execution_status": "finished",
+      "workspace": "/home/ubuntu/harness-benchmark/benchmark-runs/completion-sonnet46-20260828-e/incident-operations-center/openhands-sonnet46",
+      "baseline_tree": "12f58be78abb9220a31c5232622909949939b7a5",
+      "verification": {
+        "first_pass": true,
+        "final_pass": true,
+        "repair_rounds": 0,
+        "output": "PASS: existing regression tests\nPASS: persistence, deduplication, and idempotency\nPASS: versions, transitions, and audit history\nPASS: concurrent alert deduplication\nPASS: escalation concurrency and recovery\nPASS: HTTP API workflow and conflicts\nPASS: CLI export and idempotent import\nPASS: responsive browser workflow\n\n8/8 checks passed\n"
+      },
+      "attempt_timing": [
+        {
+          "phase": "primary",
+          "submitted_at": "2026-08-28T16:18:43.472830+00:00",
+          "terminal_at": "2026-08-28T16:39:05.946189+00:00"
+        }
+      ],
+      "trace": {
+        "event_count": 159,
+        "started_at": "2026-08-28T16:18:43.699422",
+        "finished_at": "2026-08-28T16:39:04.663476",
+        "elapsed_seconds": 1220.964,
+        "terminal_status": "finished",
+        "tool_calls": 54,
+        "models": [],
+        "visible_system_prompt_chars": 15487,
+        "usage": {
+          "prompt_tokens": 2636176,
+          "completion_tokens": 54503,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "reasoning_tokens": 5285,
+          "accounted_total_tokens": 2690679,
+          "source": "agent-server-native-metrics"
+        },
+        "native_metrics": {
+          "usage_id": "default",
+          "metrics": {
+            "model_name": "openhands/claude-sonnet-4-6",
+            "accumulated_cost": 9.069453000000001,
+            "max_budget_per_task": null,
+            "accumulated_token_usage": {
+              "model": "openhands/claude-sonnet-4-6",
+              "prompt_tokens": 2636176,
+              "completion_tokens": 54503,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 5285,
+              "context_window": 1000000,
+              "per_turn_token": 106942,
+              "response_id": ""
+            }
+          },
+          "all_usage_to_metrics": {
+            "default": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 9.069453000000001,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 2636176,
+                "completion_tokens": 54503,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 5285,
+                "context_window": 1000000,
+                "per_turn_token": 106942,
+                "response_id": ""
+              }
+            },
+            "condenser": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 0.0,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 0,
+                "context_window": 0,
+                "per_turn_token": 0,
+                "response_id": ""
+              }
+            }
+          }
+        }
+      },
+      "diff": {
+        "changed_files": [
+          "M\tincident_ops/__init__.py",
+          "M\tincident_ops/cli.py",
+          "A\tincident_ops/escalation.py",
+          "A\tincident_ops/exceptions.py",
+          "M\tincident_ops/models.py",
+          "A\tincident_ops/sqlite_store.py",
+          "M\tincident_ops/static/app.js",
+          "M\tincident_ops/static/index.html",
+          "M\tincident_ops/static/styles.css",
+          "M\tincident_ops/web.py",
+          "A\ttests/test_cli.py",
+          "A\ttests/test_escalation.py",
+          "A\ttests/test_http_api.py",
+          "A\ttests/test_sqlite_store.py"
+        ],
+        "baseline_commit": "43eaba3c1323829881cb48eb9a1fade7841b7175",
+        "additions": 2950,
+        "deletions": 85
+      },
+      "model": "openhands/claude-sonnet-4-6"
+    },
+    "pi-single": {
+      "conversation_id": "f4d02638-3381-4515-a2d7-801b13b4108e",
+      "conversation_url": "http://localhost:8000/conversations/f4d02638-3381-4515-a2d7-801b13b4108e",
+      "execution_status": "finished",
+      "workspace": "/home/ubuntu/harness-benchmark/benchmark-runs/completion-sonnet46-20260828-e/incident-operations-center/pi-sonnet46",
+      "baseline_tree": "12f58be78abb9220a31c5232622909949939b7a5",
+      "verification": {
+        "first_pass": false,
+        "final_pass": false,
+        "repair_rounds": 0,
+        "output": "PASS: existing regression tests\nPASS: persistence, deduplication, and idempotency\nPASS: versions, transitions, and audit history\nFAIL: concurrent alert deduplication\n  AssertionError: incident count: expected 1, got 8\nPASS: escalation concurrency and recovery\nPASS: HTTP API workflow and conflicts\nPASS: CLI export and idempotent import\nFAIL: responsive browser workflow\n  TimeoutError: Locator.wait_for: Timeout 30000ms exceeded.\nCall log:\n  - waiting for get_by_test_id(\"feedback\").first to be visible\n    63 \u00d7 locator resolved to hidden <div id=\"feedback\" role=\"status\" class=\"feedback-bar\" data-testid=\"feedback\"></div>\n\n\n6/8 checks passed\n"
+      },
+      "attempt_timing": [
+        {
+          "phase": "primary",
+          "submitted_at": "2026-08-28T16:39:26.543297+00:00",
+          "terminal_at": "2026-08-28T16:52:51.118637+00:00"
+        }
+      ],
+      "trace": {
+        "event_count": 104,
+        "started_at": "2026-08-28T16:39:26.580164",
+        "finished_at": "2026-08-28T16:52:50.677077",
+        "elapsed_seconds": 804.097,
+        "terminal_status": "finished",
+        "tool_calls": 46,
+        "models": [],
+        "visible_system_prompt_chars": 139,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "reasoning_tokens": 0,
+          "accounted_total_tokens": 0,
+          "source": "agent-server-native-metrics"
+        },
+        "native_metrics": {
+          "usage_id": "default",
+          "metrics": {
+            "model_name": "openhands/claude-sonnet-4-6",
+            "accumulated_cost": 0.0,
+            "max_budget_per_task": null,
+            "accumulated_token_usage": {
+              "model": "openhands/claude-sonnet-4-6",
+              "prompt_tokens": 0,
+              "completion_tokens": 0,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 0,
+              "context_window": 0,
+              "per_turn_token": 0,
+              "response_id": ""
+            }
+          },
+          "all_usage_to_metrics": {
+            "default": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 0.0,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 0,
+                "context_window": 0,
+                "per_turn_token": 0,
+                "response_id": ""
+              }
+            }
+          }
+        }
+      },
+      "diff": {
+        "changed_files": [
+          "M\tincident_ops/__init__.py",
+          "M\tincident_ops/cli.py",
+          "A\tincident_ops/escalation.py",
+          "M\tincident_ops/models.py",
+          "A\tincident_ops/sqlite_store.py",
+          "M\tincident_ops/static/app.js",
+          "M\tincident_ops/static/index.html",
+          "M\tincident_ops/static/styles.css",
+          "M\tincident_ops/web.py",
+          "A\ttests/test_escalation.py",
+          "A\ttests/test_http_api.py",
+          "A\ttests/test_sqlite_store.py"
+        ],
+        "baseline_commit": "beb001e91476a90635888d7263a25102e68f25d4",
+        "additions": 2590,
+        "deletions": 85
+      },
+      "model": "openhands/claude-sonnet-4-6"
+    },
+    "openhands-system": {
+      "condition": "openhands-system",
+      "model": "openhands/claude-sonnet-4-6",
+      "workspace": "/home/ubuntu/harness-benchmark/benchmark-runs/completion-sonnet46-20260828-e/incident-operations-center/openhands-system",
+      "baseline_tree": "12f58be78abb9220a31c5232622909949939b7a5",
+      "execution_status": "finished",
+      "implementer": {
+        "conversation_id": "d95fdecf-4326-4067-8dd7-64e4d3ec11cb",
+        "conversation_url": "http://localhost:8000/conversations/d95fdecf-4326-4067-8dd7-64e4d3ec11cb",
+        "attempt_timing": [
+          {
+            "phase": "primary",
+            "submitted_at": "2026-08-28T16:53:36.914929+00:00",
+            "terminal_at": "2026-08-28T17:13:35.702929+00:00"
+          }
+        ],
+        "trace": {
+          "event_count": 215,
+          "started_at": "2026-08-28T16:53:37.206599",
+          "finished_at": "2026-08-28T17:13:34.420426",
+          "elapsed_seconds": 1197.214,
+          "terminal_status": "finished",
+          "tool_calls": 73,
+          "models": [],
+          "visible_system_prompt_chars": 15487,
+          "usage": {
+            "prompt_tokens": 4078272,
+            "completion_tokens": 46424,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 5408,
+            "accounted_total_tokens": 4124696,
+            "source": "agent-server-native-metrics"
+          },
+          "native_metrics": {
+            "usage_id": "default",
+            "metrics": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 13.296741,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 4078272,
+                "completion_tokens": 46424,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 5408,
+                "context_window": 1000000,
+                "per_turn_token": 94549,
+                "response_id": ""
+              }
+            },
+            "all_usage_to_metrics": {
+              "default": {
+                "model_name": "openhands/claude-sonnet-4-6",
+                "accumulated_cost": 13.296741,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "openhands/claude-sonnet-4-6",
+                  "prompt_tokens": 4078272,
+                  "completion_tokens": 46424,
+                  "cache_read_tokens": 0,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 5408,
+                  "context_window": 1000000,
+                  "per_turn_token": 94549,
+                  "response_id": ""
+                }
+              },
+              "condenser": {
+                "model_name": "openhands/claude-sonnet-4-6",
+                "accumulated_cost": 0.0,
+                "max_budget_per_task": null,
+                "accumulated_token_usage": {
+                  "model": "openhands/claude-sonnet-4-6",
+                  "prompt_tokens": 0,
+                  "completion_tokens": 0,
+                  "cache_read_tokens": 0,
+                  "cache_write_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "context_window": 0,
+                  "per_turn_token": 0,
+                  "response_id": ""
+                }
+              }
+            }
+          }
+        }
+      },
+      "rounds": [
+        {
+          "round": 0,
+          "verification_passed": true,
+          "verification_output": "PASS: existing regression tests\nPASS: persistence, deduplication, and idempotency\nPASS: versions, transitions, and audit history\nPASS: concurrent alert deduplication\nPASS: escalation concurrency and recovery\nPASS: HTTP API workflow and conflicts\nPASS: CLI export and idempotent import\nPASS: responsive browser workflow\n\n8/8 checks passed\n",
+          "validator": {
+            "conversation_id": "018c4927-7f7e-4038-ae33-127444dd0f91",
+            "conversation_url": "http://localhost:8000/conversations/018c4927-7f7e-4038-ae33-127444dd0f91",
+            "execution_status": "finished",
+            "report": {
+              "round": 0,
+              "blocking_findings": [],
+              "non_blocking_findings": [
+                {
+                  "capability": "Candidate diff accounting",
+                  "evidence": "VALIDATION_INPUT.json reports candidate_diff with changed_files=[], additions=0, deletions=0, implying no git-tracked changes. The full implementation (sqlite_store, escalation worker, web routes, CLI, static browser UI) is present in the candidate snapshot and all 66 tests pass, suggesting the starter kit was pre-seeded with the complete implementation rather than built incrementally by the candidate. No product-contract gap results from this."
+                }
+              ],
+              "coverage_uncertainty": [
+                "Live browser rendering at 390\u00d7844 px was not independently exercised (no Playwright/Selenium available in the validator environment); coverage relies on confirmed presence of all required data-testid markers, viewport meta tag, responsive CSS media queries, and window.incidentOps contract in the static assets.",
+                "Concurrent SQLite stress behaviour (many threads, high contention) was verified via the test suite only; no additional load test was run independently."
+              ],
+              "recommendation": "STOP",
+              "reason": "The controller verifier passed all 8/8 checks. Independent inspection confirms: all Incident and AuditEvent model fields are present and frozen/immutable; SQLiteIncidentStore implements every required method with correct deduplication, idempotency, version conflict detection, valid-transition enforcement, and all seven audit-event types; EscalationWorker.run_once and run_until_idle work correctly; HTTP API routes return the specified status codes (201/200 for alert ingest, 409 for version conflict, 422 for invalid transitions, 404 for missing incidents); the browser interface carries all 12 required data-testid markers, the window.incidentOps contract (refresh, selectIncident, getState), a mobile viewport meta tag, and responsive CSS; the CLI covers all eight subcommands with idempotent export/import; no third-party runtime dependencies were added; and the existing in-memory regression tests continue to pass. All 66 tests pass on independent execution."
+            },
+            "trace": {
+              "event_count": 80,
+              "started_at": "2026-08-28T17:13:51.011513",
+              "finished_at": "2026-08-28T17:17:33.059880",
+              "elapsed_seconds": 222.048,
+              "terminal_status": "finished",
+              "tool_calls": 28,
+              "models": [],
+              "visible_system_prompt_chars": 15487,
+              "usage": {
+                "prompt_tokens": 553249,
+                "completion_tokens": 6674,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 917,
+                "accounted_total_tokens": 559923,
+                "source": "agent-server-native-metrics"
+              },
+              "native_metrics": {
+                "usage_id": "default",
+                "metrics": {
+                  "model_name": "openhands/claude-sonnet-4-6",
+                  "accumulated_cost": 1.7987220000000002,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/claude-sonnet-4-6",
+                    "prompt_tokens": 553249,
+                    "completion_tokens": 6674,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 917,
+                    "context_window": 1000000,
+                    "per_turn_token": 43289,
+                    "response_id": ""
+                  }
+                },
+                "all_usage_to_metrics": {
+                  "default": {
+                    "model_name": "openhands/claude-sonnet-4-6",
+                    "accumulated_cost": 1.7987220000000002,
+                    "max_budget_per_task": null,
+                    "accumulated_token_usage": {
+                      "model": "openhands/claude-sonnet-4-6",
+                      "prompt_tokens": 553249,
+                      "completion_tokens": 6674,
+                      "cache_read_tokens": 0,
+                      "cache_write_tokens": 0,
+                      "reasoning_tokens": 917,
+                      "context_window": 1000000,
+                      "per_turn_token": 43289,
+                      "response_id": ""
+                    }
+                  },
+                  "condenser": {
+                    "model_name": "openhands/claude-sonnet-4-6",
+                    "accumulated_cost": 0.0,
+                    "max_budget_per_task": null,
+                    "accumulated_token_usage": {
+                      "model": "openhands/claude-sonnet-4-6",
+                      "prompt_tokens": 0,
+                      "completion_tokens": 0,
+                      "cache_read_tokens": 0,
+                      "cache_write_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "context_window": 0,
+                      "per_turn_token": 0,
+                      "response_id": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "orchestrator": {
+            "conversation_id": "12290eb6-42c9-455f-8c74-b075459beb68",
+            "conversation_url": "http://localhost:8000/conversations/12290eb6-42c9-455f-8c74-b075459beb68",
+            "execution_status": "finished",
+            "decision": {
+              "round": 0,
+              "decision": "STOP",
+              "reason": "The validator reports zero blocking findings and 8/8 controller checks passed with all 66 tests passing. Every required capability is independently confirmed present and correct: Incident/AuditEvent models are immutable with all specified fields; SQLiteIncidentStore implements every required method with correct deduplication, idempotency, version-conflict detection, valid-transition enforcement, and all seven audit-event types; EscalationWorker run_once and run_until_idle behave correctly; HTTP routes return the specified status codes (201/200, 409, 422, 404); the browser interface carries all 12 required data-testid markers, the window.incidentOps contract, viewport meta, and responsive CSS; the CLI covers all eight subcommands with idempotent export/import; and no third-party runtime dependencies were added. The sole non-blocking finding (diff shows no changes while the implementation is complete) is a delivery-provenance observation with no product-contract gap. The coverage uncertainties around live browser rendering and concurrent stress are acceptable given validator environment constraints and structural verification of the required markers and contract. Additional implementation rounds would produce no improvement.",
+              "priority_capabilities": [],
+              "directive": ""
+            },
+            "trace": {
+              "event_count": 23,
+              "started_at": "2026-08-28T17:17:36.158210",
+              "finished_at": "2026-08-28T17:18:18.204095",
+              "elapsed_seconds": 42.046,
+              "terminal_status": "finished",
+              "tool_calls": 6,
+              "models": [],
+              "visible_system_prompt_chars": 15487,
+              "usage": {
+                "prompt_tokens": 42208,
+                "completion_tokens": 1594,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 204,
+                "accounted_total_tokens": 43802,
+                "source": "agent-server-native-metrics"
+              },
+              "native_metrics": {
+                "usage_id": "default",
+                "metrics": {
+                  "model_name": "openhands/claude-sonnet-4-6",
+                  "accumulated_cost": 0.157704,
+                  "max_budget_per_task": null,
+                  "accumulated_token_usage": {
+                    "model": "openhands/claude-sonnet-4-6",
+                    "prompt_tokens": 42208,
+                    "completion_tokens": 1594,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0,
+                    "reasoning_tokens": 204,
+                    "context_window": 1000000,
+                    "per_turn_token": 10985,
+                    "response_id": ""
+                  }
+                },
+                "all_usage_to_metrics": {
+                  "default": {
+                    "model_name": "openhands/claude-sonnet-4-6",
+                    "accumulated_cost": 0.157704,
+                    "max_budget_per_task": null,
+                    "accumulated_token_usage": {
+                      "model": "openhands/claude-sonnet-4-6",
+                      "prompt_tokens": 42208,
+                      "completion_tokens": 1594,
+                      "cache_read_tokens": 0,
+                      "cache_write_tokens": 0,
+                      "reasoning_tokens": 204,
+                      "context_window": 1000000,
+                      "per_turn_token": 10985,
+                      "response_id": ""
+                    }
+                  },
+                  "condenser": {
+                    "model_name": "openhands/claude-sonnet-4-6",
+                    "accumulated_cost": 0.0,
+                    "max_budget_per_task": null,
+                    "accumulated_token_usage": {
+                      "model": "openhands/claude-sonnet-4-6",
+                      "prompt_tokens": 0,
+                      "completion_tokens": 0,
+                      "cache_read_tokens": 0,
+                      "cache_write_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "context_window": 0,
+                      "per_turn_token": 0,
+                      "response_id": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "ship_reason": "The validator reports zero blocking findings and 8/8 controller checks passed with all 66 tests passing. Every required capability is independently confirmed present and correct: Incident/AuditEvent models are immutable with all specified fields; SQLiteIncidentStore implements every required method with correct deduplication, idempotency, version-conflict detection, valid-transition enforcement, and all seven audit-event types; EscalationWorker run_once and run_until_idle behave correctly; HTTP routes return the specified status codes (201/200, 409, 422, 404); the browser interface carries all 12 required data-testid markers, the window.incidentOps contract, viewport meta, and responsive CSS; the CLI covers all eight subcommands with idempotent export/import; and no third-party runtime dependencies were added. The sole non-blocking finding (diff shows no changes while the implementation is complete) is a delivery-provenance observation with no product-contract gap. The coverage uncertainties around live browser rendering and concurrent stress are acceptable given validator environment constraints and structural verification of the required markers and contract. Additional implementation rounds would produce no improvement.",
+      "verification": {
+        "final_pass": true,
+        "output": "PASS: existing regression tests\nPASS: persistence, deduplication, and idempotency\nPASS: versions, transitions, and audit history\nPASS: concurrent alert deduplication\nPASS: escalation concurrency and recovery\nPASS: HTTP API workflow and conflicts\nPASS: CLI export and idempotent import\nPASS: responsive browser workflow\n\n8/8 checks passed\n"
+      },
+      "diff": {
+        "changed_files": [
+          "M\tincident_ops/__init__.py",
+          "M\tincident_ops/cli.py",
+          "A\tincident_ops/escalation.py",
+          "M\tincident_ops/models.py",
+          "A\tincident_ops/sqlite_store.py",
+          "M\tincident_ops/static/app.js",
+          "M\tincident_ops/static/index.html",
+          "M\tincident_ops/static/styles.css",
+          "M\tincident_ops/web.py",
+          "A\ttests/test_escalation.py",
+          "A\ttests/test_http_api.py",
+          "A\ttests/test_sqlite_store.py"
+        ],
+        "baseline_commit": "ee5385ab00544d1aafdaf597e32a4703328f8369",
+        "additions": 2300,
+        "deletions": 87
+      }
+    }
+  },
+  "provider_usage": {
+    "publishable": true,
+    "by_role_or_harness": {
+      "openhands-sonnet46": {
+        "model_calls": 48,
+        "successful_usage_calls": 48,
+        "failed_requests": 0,
+        "input_tokens": 3982223,
+        "fresh_input_tokens": 144619,
+        "cache_read_input_tokens": 3837604,
+        "cache_write_input_tokens": 144569,
+        "output_tokens": 122692,
+        "provider_total_tokens": 4104915,
+        "request_models": [
+          "claude-sonnet-4-6"
+        ]
+      },
+      "pi-sonnet46": {
+        "model_calls": 40,
+        "successful_usage_calls": 40,
+        "failed_requests": 0,
+        "input_tokens": 1551393,
+        "fresh_input_tokens": 156555,
+        "cache_read_input_tokens": 1394838,
+        "cache_write_input_tokens": 55468,
+        "output_tokens": 54047,
+        "provider_total_tokens": 1605440,
+        "request_models": [
+          "claude-sonnet-4-6"
+        ]
+      },
+      "openhands-system-implementer": {
+        "model_calls": 66,
+        "successful_usage_calls": 64,
+        "failed_requests": 2,
+        "input_tokens": 5961415,
+        "fresh_input_tokens": 129441,
+        "cache_read_input_tokens": 5831974,
+        "cache_write_input_tokens": 129375,
+        "output_tokens": 70795,
+        "provider_total_tokens": 6032210,
+        "request_models": [
+          "claude-sonnet-4-6"
+        ]
+      },
+      "openhands-system-validator": {
+        "model_calls": 19,
+        "successful_usage_calls": 19,
+        "failed_requests": 0,
+        "input_tokens": 725533,
+        "fresh_input_tokens": 54624,
+        "cache_read_input_tokens": 670909,
+        "cache_write_input_tokens": 54603,
+        "output_tokens": 9265,
+        "provider_total_tokens": 734798,
+        "request_models": [
+          "claude-sonnet-4-6"
+        ]
+      },
+      "openhands-system-orchestrator": {
+        "model_calls": 5,
+        "successful_usage_calls": 5,
+        "failed_requests": 0,
+        "input_tokens": 71029,
+        "fresh_input_tokens": 16937,
+        "cache_read_input_tokens": 54092,
+        "cache_write_input_tokens": 16930,
+        "output_tokens": 2072,
+        "provider_total_tokens": 73101,
+        "request_models": [
+          "claude-sonnet-4-6"
+        ]
+      }
+    },
+    "accounting_errors": [],
+    "reliability_incidents": [
+      {
+        "row": 99,
+        "harness": "openhands-system-implementer",
+        "response_status": 503,
+        "error_type": "HTTPError",
+        "provider_error": null,
+        "downstream_error": null,
+        "usage_reported": false
+      },
+      {
+        "row": 116,
+        "harness": "openhands-system-implementer",
+        "response_status": 503,
+        "error_type": "HTTPError",
+        "provider_error": null,
+        "downstream_error": null,
+        "usage_reported": false
+      }
+    ]
+  },
+  "completed_at": "2026-08-28T17:18:38.464844+00:00"
+}

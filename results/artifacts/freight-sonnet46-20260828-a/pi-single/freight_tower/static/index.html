@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Freight Control Tower</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main>
+  <!-- Login panel -->
+  <section id="login-panel" class="panel">
+    <header>
+      <p class="eyebrow">Network operations</p>
+      <h1>Freight Control Tower</h1>
+      <p>Sign in with your bearer token to access your tenant dashboard.</p>
+    </header>
+    <form id="login-form">
+      <label>Bearer Token
+        <input type="password" id="token-input" placeholder="Paste your token" required autocomplete="current-password">
+      </label>
+      <button type="submit">Sign in</button>
+    </form>
+    <p id="login-feedback" role="status" class="feedback"></p>
+  </section>
+
+  <!-- Dashboard (hidden until signed in) -->
+  <section id="dashboard" hidden>
+    <header id="dash-header">
+      <div>
+        <p class="eyebrow" id="tenant-label">Tenant</p>
+        <h1>Freight Control Tower</h1>
+      </div>
+      <nav class="tabs">
+        <button class="tab active" data-tab="shipments">Shipments</button>
+        <button class="tab" data-tab="exceptions">Exceptions</button>
+        <button class="tab" data-tab="audit">Audit Log</button>
+        <button class="tab" data-tab="deliveries">Outbox</button>
+      </nav>
+      <button id="sign-out-btn" class="secondary">Sign out</button>
+    </header>
+
+    <!-- Global feedback -->
+    <p id="dash-feedback" role="status" class="feedback"></p>
+
+    <!-- Filters bar -->
+    <div id="filters-bar" class="filters">
+      <!-- Shipments filters -->
+      <div data-panel="shipments" class="filter-group">
+        <label>Status
+          <select id="ship-status-filter">
+            <option value="">All</option>
+            <option>created</option>
+            <option>picked_up</option>
+            <option>in_transit</option>
+            <option>delayed</option>
+            <option>delivered</option>
+            <option>cancelled</option>
+          </select>
+        </label>
+        <button id="ship-refresh-btn">Refresh</button>
+      </div>
+      <!-- Exceptions filters -->
+      <div data-panel="exceptions" class="filter-group hidden">
+        <label>Status
+          <select id="exc-status-filter">
+            <option value="">All</option>
+            <option>open</option>
+            <option>acknowledged</option>
+            <option>resolved</option>
+          </select>
+        </label>
+        <label>Severity
+          <select id="exc-severity-filter">
+            <option value="">All</option>
+            <option>P1</option>
+            <option>P2</option>
+            <option>P3</option>
+          </select>
+        </label>
+        <label>Assignee
+          <input id="exc-assignee-filter" placeholder="Filter by assignee">
+        </label>
+        <button id="exc-refresh-btn">Refresh</button>
+      </div>
+      <!-- Audit filters -->
+      <div data-panel="audit" class="filter-group hidden">
+        <label>Resource type
+          <input id="audit-type-filter" placeholder="e.g. exception">
+        </label>
+        <button id="audit-refresh-btn">Refresh</button>
+      </div>
+      <!-- Deliveries filters -->
+      <div data-panel="deliveries" class="filter-group hidden">
+        <label>Status
+          <select id="del-status-filter">
+            <option value="">All</option>
+            <option>pending</option>
+            <option>claimed</option>
+            <option>delivered</option>
+            <option>failed</option>
+            <option>dead</option>
+          </select>
+        </label>
+        <button id="del-refresh-btn">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Tab panels -->
+    <div id="tab-panels">
+      <div id="panel-shipments" class="tab-panel">
+        <p class="loading" aria-live="polite">Loading…</p>
+      </div>
+      <div id="panel-exceptions" class="tab-panel hidden">
+        <p class="loading" aria-live="polite">Loading…</p>
+      </div>
+      <div id="panel-audit" class="tab-panel hidden">
+        <p class="loading" aria-live="polite">Loading…</p>
+      </div>
+      <div id="panel-deliveries" class="tab-panel hidden">
+        <p class="loading" aria-live="polite">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Exception mutation modal -->
+  <dialog id="exc-modal" aria-labelledby="modal-title">
+    <form id="exc-form" method="dialog">
+      <h2 id="modal-title">Exception</h2>
+      <input type="hidden" id="modal-exc-id">
+      <input type="hidden" id="modal-exc-version">
+      <p id="modal-info"></p>
+      <div id="modal-fields"></div>
+      <p id="modal-feedback" role="alert" class="feedback"></p>
+      <footer class="modal-footer">
+        <button type="button" id="modal-ack-btn">Acknowledge</button>
+        <button type="button" id="modal-resolve-btn">Resolve</button>
+        <button type="button" id="modal-assign-btn">Assign</button>
+        <button type="button" id="modal-note-btn">Add note</button>
+        <button type="button" class="secondary" id="modal-close-btn">Close</button>
+      </footer>
+    </form>
+  </dialog>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+product,price,quantity,category
+Widget,9.99,150,Hardware
+Gadget,19.99,80,Electronics
+Gizmo,14.50,200,Hardware
+Doohickey,5.99,300,Accessories
+Thingamajig,29.99,50,Electronics
+Contraption,49.99,25,Hardware
+Apparatus,99.99,10,Electronics
+"Special, Deluxe Item",199.99,5,Hardware

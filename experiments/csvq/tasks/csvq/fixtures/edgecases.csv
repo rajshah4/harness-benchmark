@@ -1,0 +1,8 @@
+name,description,notes
+Simple Row,no special chars here,plain
+"Quoted Field","has, a comma inside","also quoted"
+"Nested ""quotes""","embedded double-quotes",normal
+Multi-word,just spaces,ok
+"Newline
+field","spans two lines",after newline
+Empty,,

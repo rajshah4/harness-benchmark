@@ -1,0 +1,532 @@
+{
+  "total_cases": 49,
+  "comparison_rules": {
+    "channels": [
+      "exit_code",
+      "stdout"
+    ],
+    "stdout_normalization": "strip trailing whitespace from each line",
+    "stderr": "not compared (error messages may differ)"
+  },
+  "cases": [
+    {
+      "id": "select-basic-2col",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,age",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-basic-3col",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,age,city",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-reorder",
+      "weight": 2,
+      "args": [
+        "select",
+        "city,name",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-single",
+      "weight": 1,
+      "args": [
+        "select",
+        "name",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-all",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,age,city,salary",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-stdin",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,city"
+      ],
+      "stdin": "people"
+    },
+    {
+      "id": "select-case-insensitive",
+      "weight": 2,
+      "args": [
+        "select",
+        "NAME,AGE",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-nonexistent",
+      "weight": 3,
+      "args": [
+        "select",
+        "foobar",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-products",
+      "weight": 1,
+      "args": [
+        "select",
+        "product,price",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "select-edge-quoted",
+      "weight": 3,
+      "args": [
+        "select",
+        "name,description",
+        "$FIXTURE/edgecases.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-num-gt",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        ">",
+        "28",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-num-lt",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        "<",
+        "30",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-num-eq",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        "=",
+        "30",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-num-ge",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        ">=",
+        "30",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-num-le",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        "<=",
+        "30",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-num-ne",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        "!=",
+        "30",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-str-eq",
+      "weight": 1,
+      "args": [
+        "filter",
+        "city",
+        "=",
+        "NYC",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-str-ne",
+      "weight": 2,
+      "args": [
+        "filter",
+        "city",
+        "!=",
+        "NYC",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-contains",
+      "weight": 2,
+      "args": [
+        "filter",
+        "city",
+        "contains",
+        "an",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-tilde",
+      "weight": 2,
+      "args": [
+        "filter",
+        "city",
+        "~",
+        "an",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-str-gt",
+      "weight": 3,
+      "args": [
+        "filter",
+        "name",
+        ">",
+        "D",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-stdin",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        ">",
+        "28"
+      ],
+      "stdin": "people"
+    },
+    {
+      "id": "filter-no-match",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        ">",
+        "1000",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-products",
+      "weight": 1,
+      "args": [
+        "filter",
+        "category",
+        "=",
+        "Hardware",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-products-price",
+      "weight": 2,
+      "args": [
+        "filter",
+        "price",
+        ">=",
+        "19.99",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "filter-edge-quoted",
+      "weight": 3,
+      "args": [
+        "filter",
+        "name",
+        "contains",
+        "Deluxe",
+        "$FIXTURE/edgecases.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-name",
+      "weight": 1,
+      "args": [
+        "sort",
+        "name",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-age",
+      "weight": 1,
+      "args": [
+        "sort",
+        "age",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-age-reverse",
+      "weight": 2,
+      "args": [
+        "sort",
+        "age",
+        "--reverse",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-age-reverse-short",
+      "weight": 2,
+      "args": [
+        "sort",
+        "age",
+        "-r",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-salary",
+      "weight": 1,
+      "args": [
+        "sort",
+        "salary",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-city",
+      "weight": 1,
+      "args": [
+        "sort",
+        "city",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-stdin",
+      "weight": 1,
+      "args": [
+        "sort",
+        "age"
+      ],
+      "stdin": "people"
+    },
+    {
+      "id": "sort-products-price",
+      "weight": 2,
+      "args": [
+        "sort",
+        "price",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "sort-products-price-rev",
+      "weight": 2,
+      "args": [
+        "sort",
+        "price",
+        "--reverse",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "stats-age",
+      "weight": 1,
+      "args": [
+        "stats",
+        "age",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "stats-salary",
+      "weight": 1,
+      "args": [
+        "stats",
+        "salary",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "stats-price",
+      "weight": 1,
+      "args": [
+        "stats",
+        "price",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "stats-quantity",
+      "weight": 1,
+      "args": [
+        "stats",
+        "quantity",
+        "$FIXTURE/products.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "stats-stdin",
+      "weight": 1,
+      "args": [
+        "stats",
+        "age"
+      ],
+      "stdin": "people"
+    },
+    {
+      "id": "stats-nonexistent",
+      "weight": 3,
+      "args": [
+        "stats",
+        "foobar",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "join-basic",
+      "weight": 1,
+      "args": [
+        "join",
+        "name",
+        "manager",
+        "$FIXTURE/people.csv",
+        "$FIXTURE/departments.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "join-reverse",
+      "weight": 2,
+      "args": [
+        "join",
+        "manager",
+        "name",
+        "$FIXTURE/departments.csv",
+        "$FIXTURE/people.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "join-no-match",
+      "weight": 3,
+      "args": [
+        "join",
+        "city",
+        "dept",
+        "$FIXTURE/people.csv",
+        "$FIXTURE/departments.csv"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "edge-empty-input",
+      "weight": 3,
+      "args": [
+        "select",
+        "name",
+        "$FIXTURE/empty.csv"
+      ],
+      "stdin": "empty"
+    },
+    {
+      "id": "edge-no-args",
+      "weight": 3,
+      "args": [],
+      "stdin": null
+    },
+    {
+      "id": "edge-help",
+      "weight": 1,
+      "args": [
+        "--help"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "edge-unknown-cmd",
+      "weight": 3,
+      "args": [
+        "foobar"
+      ],
+      "stdin": null
+    },
+    {
+      "id": "edge-missing-file",
+      "weight": 3,
+      "args": [
+        "select",
+        "name",
+        "/nonexistent/file.csv"
+      ],
+      "stdin": null
+    }
+  ]
+}

@@ -1,0 +1,679 @@
+{
+  "cases": [
+    {
+      "id": "select-basic-2col",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,age",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age\nAlice,30\nBob,25\nCharlie,35\nDiana,28\nEve,32\nFrank,40\nGrace,29\nHenry,45\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-basic-3col",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,age,city",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city\nAlice,30,New York\nBob,25,Los Angeles\nCharlie,35,San Francisco\nDiana,28,Chicago\nEve,32,Houston\nFrank,40,Seattle\nGrace,29,Boston\nHenry,45,Miami\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-reorder",
+      "weight": 2,
+      "args": [
+        "select",
+        "city,name",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "city,name\nNew York,Alice\nLos Angeles,Bob\nSan Francisco,Charlie\nChicago,Diana\nHouston,Eve\nSeattle,Frank\nBoston,Grace\nMiami,Henry\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-single",
+      "weight": 1,
+      "args": [
+        "select",
+        "name",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name\nAlice\nBob\nCharlie\nDiana\nEve\nFrank\nGrace\nHenry\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-all",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,age,city,salary",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nBob,25,Los Angeles,72000\nCharlie,35,San Francisco,95000\nDiana,28,Chicago,78000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-stdin",
+      "weight": 1,
+      "args": [
+        "select",
+        "name,city"
+      ],
+      "stdin": "people",
+      "expected_exit_code": 0,
+      "expected_stdout": "name,city\nAlice,New York\nBob,Los Angeles\nCharlie,San Francisco\nDiana,Chicago\nEve,Houston\nFrank,Seattle\nGrace,Boston\nHenry,Miami\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-case-insensitive",
+      "weight": 2,
+      "args": [
+        "select",
+        "NAME,AGE",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "NAME,AGE\nAlice,30\nBob,25\nCharlie,35\nDiana,28\nEve,32\nFrank,40\nGrace,29\nHenry,45\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-nonexistent",
+      "weight": 3,
+      "args": [
+        "select",
+        "foobar",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 1,
+      "expected_stdout": "",
+      "expected_stderr": "csvq: select: unknown column\n"
+    },
+    {
+      "id": "select-products",
+      "weight": 1,
+      "args": [
+        "select",
+        "product,price",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "product,price\nWidget,9.99\nGadget,19.99\nGizmo,14.50\nDoohickey,5.99\nThingamajig,29.99\nContraption,49.99\nApparatus,99.99\nSpecial, Deluxe Item,199.99\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "select-edge-quoted",
+      "weight": 3,
+      "args": [
+        "select",
+        "name,description",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/edgecases.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,description\nSimple Row,no special chars here\nQuoted Field,has, a comma inside\nNested \"quotes\",embedded double-quotes\nMulti-word,just spaces\nNewline\nfield,spans two lines\nEmpty,\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-num-gt",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        ">",
+        "28",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nCharlie,35,San Francisco,95000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-num-lt",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        "<",
+        "30",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nBob,25,Los Angeles,72000\nDiana,28,Chicago,78000\nGrace,29,Boston,79000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-num-eq",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        "=",
+        "30",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-num-ge",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        ">=",
+        "30",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nCharlie,35,San Francisco,95000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-num-le",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        "<=",
+        "30",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nBob,25,Los Angeles,72000\nDiana,28,Chicago,78000\nGrace,29,Boston,79000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-num-ne",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        "!=",
+        "30",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nBob,25,Los Angeles,72000\nCharlie,35,San Francisco,95000\nDiana,28,Chicago,78000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-str-eq",
+      "weight": 1,
+      "args": [
+        "filter",
+        "city",
+        "=",
+        "NYC",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-str-ne",
+      "weight": 2,
+      "args": [
+        "filter",
+        "city",
+        "!=",
+        "NYC",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nBob,25,Los Angeles,72000\nCharlie,35,San Francisco,95000\nDiana,28,Chicago,78000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-contains",
+      "weight": 2,
+      "args": [
+        "filter",
+        "city",
+        "contains",
+        "an",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nCharlie,35,San Francisco,95000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-tilde",
+      "weight": 2,
+      "args": [
+        "filter",
+        "city",
+        "~",
+        "an",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nCharlie,35,San Francisco,95000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-str-gt",
+      "weight": 3,
+      "args": [
+        "filter",
+        "name",
+        ">",
+        "D",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nDiana,28,Chicago,78000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-stdin",
+      "weight": 1,
+      "args": [
+        "filter",
+        "age",
+        ">",
+        "28"
+      ],
+      "stdin": "people",
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nCharlie,35,San Francisco,95000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-no-match",
+      "weight": 2,
+      "args": [
+        "filter",
+        "age",
+        ">",
+        "1000",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-products",
+      "weight": 1,
+      "args": [
+        "filter",
+        "category",
+        "=",
+        "Hardware",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "product,price,quantity,category\nWidget,9.99,150,Hardware\nGizmo,14.50,200,Hardware\nContraption,49.99,25,Hardware\n\"Special, Deluxe Item\",199.99,5,Hardware\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-products-price",
+      "weight": 2,
+      "args": [
+        "filter",
+        "price",
+        ">=",
+        "19.99",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "product,price,quantity,category\nGadget,19.99,80,Electronics\nThingamajig,29.99,50,Electronics\nContraption,49.99,25,Hardware\nApparatus,99.99,10,Electronics\n\"Special, Deluxe Item\",199.99,5,Hardware\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "filter-edge-quoted",
+      "weight": 3,
+      "args": [
+        "filter",
+        "name",
+        "contains",
+        "Deluxe",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/edgecases.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,description,notes\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-name",
+      "weight": 1,
+      "args": [
+        "sort",
+        "name",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nAlice,30,New York,85000\nBob,25,Los Angeles,72000\nCharlie,35,San Francisco,95000\nDiana,28,Chicago,78000\nEve,32,Houston,88000\nFrank,40,Seattle,105000\nGrace,29,Boston,79000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-age",
+      "weight": 1,
+      "args": [
+        "sort",
+        "age",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nBob,25,Los Angeles,72000\nDiana,28,Chicago,78000\nGrace,29,Boston,79000\nAlice,30,New York,85000\nEve,32,Houston,88000\nCharlie,35,San Francisco,95000\nFrank,40,Seattle,105000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-age-reverse",
+      "weight": 2,
+      "args": [
+        "sort",
+        "age",
+        "--reverse",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nHenry,45,Miami,110000\nFrank,40,Seattle,105000\nCharlie,35,San Francisco,95000\nEve,32,Houston,88000\nAlice,30,New York,85000\nGrace,29,Boston,79000\nDiana,28,Chicago,78000\nBob,25,Los Angeles,72000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-age-reverse-short",
+      "weight": 2,
+      "args": [
+        "sort",
+        "age",
+        "-r",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nHenry,45,Miami,110000\nFrank,40,Seattle,105000\nCharlie,35,San Francisco,95000\nEve,32,Houston,88000\nAlice,30,New York,85000\nGrace,29,Boston,79000\nDiana,28,Chicago,78000\nBob,25,Los Angeles,72000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-salary",
+      "weight": 1,
+      "args": [
+        "sort",
+        "salary",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nBob,25,Los Angeles,72000\nDiana,28,Chicago,78000\nGrace,29,Boston,79000\nAlice,30,New York,85000\nEve,32,Houston,88000\nCharlie,35,San Francisco,95000\nFrank,40,Seattle,105000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-city",
+      "weight": 1,
+      "args": [
+        "sort",
+        "city",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nGrace,29,Boston,79000\nDiana,28,Chicago,78000\nEve,32,Houston,88000\nBob,25,Los Angeles,72000\nHenry,45,Miami,110000\nAlice,30,New York,85000\nCharlie,35,San Francisco,95000\nFrank,40,Seattle,105000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-stdin",
+      "weight": 1,
+      "args": [
+        "sort",
+        "age"
+      ],
+      "stdin": "people",
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary\nBob,25,Los Angeles,72000\nDiana,28,Chicago,78000\nGrace,29,Boston,79000\nAlice,30,New York,85000\nEve,32,Houston,88000\nCharlie,35,San Francisco,95000\nFrank,40,Seattle,105000\nHenry,45,Miami,110000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-products-price",
+      "weight": 2,
+      "args": [
+        "sort",
+        "price",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "product,price,quantity,category\nDoohickey,5.99,300,Accessories\nWidget,9.99,150,Hardware\nGizmo,14.50,200,Hardware\nGadget,19.99,80,Electronics\nThingamajig,29.99,50,Electronics\nContraption,49.99,25,Hardware\nApparatus,99.99,10,Electronics\n\"Special, Deluxe Item\",199.99,5,Hardware\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "sort-products-price-rev",
+      "weight": 2,
+      "args": [
+        "sort",
+        "price",
+        "--reverse",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "product,price,quantity,category\n\"Special, Deluxe Item\",199.99,5,Hardware\nApparatus,99.99,10,Electronics\nContraption,49.99,25,Hardware\nThingamajig,29.99,50,Electronics\nGadget,19.99,80,Electronics\nGizmo,14.50,200,Hardware\nWidget,9.99,150,Hardware\nDoohickey,5.99,300,Accessories\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "stats-age",
+      "weight": 1,
+      "args": [
+        "stats",
+        "age",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "column,count,sum,mean,min,max,std\nage,8,264,33,25,45,6.676183683170241\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "stats-salary",
+      "weight": 1,
+      "args": [
+        "stats",
+        "salary",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "column,count,sum,mean,min,max,std\nsalary,8,712000,89000,72000,110000,13416.407864998739\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "stats-price",
+      "weight": 1,
+      "args": [
+        "stats",
+        "price",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "column,count,sum,mean,min,max,std\nprice,8,430.43,53.80375,5.99,199.99,66.52516450562148\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "stats-quantity",
+      "weight": 1,
+      "args": [
+        "stats",
+        "quantity",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/products.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "column,count,sum,mean,min,max,std\nquantity,8,820,102.5,5,300,105.62737740350678\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "stats-stdin",
+      "weight": 1,
+      "args": [
+        "stats",
+        "age"
+      ],
+      "stdin": "people",
+      "expected_exit_code": 0,
+      "expected_stdout": "column,count,sum,mean,min,max,std\nage,8,264,33,25,45,6.676183683170241\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "stats-nonexistent",
+      "weight": 3,
+      "args": [
+        "stats",
+        "foobar",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 1,
+      "expected_stdout": "",
+      "expected_stderr": "csvq: stats: unknown column 'foobar'\n"
+    },
+    {
+      "id": "join-basic",
+      "weight": 1,
+      "args": [
+        "join",
+        "name",
+        "manager",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/departments.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary,dept,manager,budget\nAlice,30,New York,85000,Sales,Alice,300000\nBob,25,Los Angeles,72000,Marketing,Bob,200000\nDiana,28,Chicago,78000,Engineering,Diana,500000\nGrace,29,Boston,79000,HR,Grace,150000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "join-reverse",
+      "weight": 2,
+      "args": [
+        "join",
+        "manager",
+        "name",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/departments.csv",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "dept,manager,budget,name,age,city,salary\nEngineering,Diana,500000,Diana,28,Chicago,78000\nMarketing,Bob,200000,Bob,25,Los Angeles,72000\nSales,Alice,300000,Alice,30,New York,85000\nHR,Grace,150000,Grace,29,Boston,79000\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "join-no-match",
+      "weight": 3,
+      "args": [
+        "join",
+        "city",
+        "dept",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/people.csv",
+        "/Users/rajiv.shah/workspace/project/b439e185fd8b4e7388ff4e66c5cfa58e/tasks/csvq/hidden-suite/../fixtures/departments.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "name,age,city,salary,dept,manager,budget\n",
+      "expected_stderr": ""
+    },
+    {
+      "id": "edge-empty-input",
+      "weight": 3,
+      "args": [
+        "select",
+        "name",
+        "a"
+      ],
+      "stdin": "empty",
+      "expected_exit_code": 1,
+      "expected_stdout": "",
+      "expected_stderr": "csvq: cannot open 'a': No such file or directory (os error 2)\n"
+    },
+    {
+      "id": "edge-no-args",
+      "weight": 3,
+      "args": [],
+      "stdin": null,
+      "expected_exit_code": 1,
+      "expected_stdout": "",
+      "expected_stderr": "Usage: csvq <command> [options] [file...]\n\nCommands:\n  select <col1,col2,...> [file]     Select columns by name\n  filter <col> <op> <val> [file]    Filter rows where col op val is true\n  sort <col> [--reverse] [file]     Sort rows by column\n  stats <col> [file]                Show statistics for a numeric column\n  join <lcol> <rcol> <left> <right> Inner join on column match\n\nInput: reads from stdin if no file given, use '-' for stdin\nOperators: =, ==, !=, >, <, >=, <=, contains, ~\n"
+    },
+    {
+      "id": "edge-help",
+      "weight": 1,
+      "args": [
+        "--help"
+      ],
+      "stdin": null,
+      "expected_exit_code": 0,
+      "expected_stdout": "",
+      "expected_stderr": "Usage: csvq <command> [options] [file...]\n\nCommands:\n  select <col1,col2,...> [file]     Select columns by name\n  filter <col> <op> <val> [file]    Filter rows where col op val is true\n  sort <col> [--reverse] [file]     Sort rows by column\n  stats <col> [file]                Show statistics for a numeric column\n  join <lcol> <rcol> <left> <right> Inner join on column match\n\nInput: reads from stdin if no file given, use '-' for stdin\nOperators: =, ==, !=, >, <, >=, <=, contains, ~\n"
+    },
+    {
+      "id": "edge-unknown-cmd",
+      "weight": 3,
+      "args": [
+        "foobar"
+      ],
+      "stdin": null,
+      "expected_exit_code": 1,
+      "expected_stdout": "",
+      "expected_stderr": "csvq: unknown command 'foobar'\nUsage: csvq <command> [options] [file...]\n\nCommands:\n  select <col1,col2,...> [file]     Select columns by name\n  filter <col> <op> <val> [file]    Filter rows where col op val is true\n  sort <col> [--reverse] [file]     Sort rows by column\n  stats <col> [file]                Show statistics for a numeric column\n  join <lcol> <rcol> <left> <right> Inner join on column match\n\nInput: reads from stdin if no file given, use '-' for stdin\nOperators: =, ==, !=, >, <, >=, <=, contains, ~\n"
+    },
+    {
+      "id": "edge-missing-file",
+      "weight": 3,
+      "args": [
+        "select",
+        "name",
+        "/nonexistent/file.csv"
+      ],
+      "stdin": null,
+      "expected_exit_code": 1,
+      "expected_stdout": "",
+      "expected_stderr": "csvq: cannot open '/nonexistent/file.csv': No such file or directory (os error 2)\n"
+    }
+  ],
+  "total_cases": 49,
+  "comparison_rules": {
+    "channels": [
+      "exit_code",
+      "stdout"
+    ],
+    "stdout_normalization": "strip trailing whitespace from each line",
+    "stderr": "not compared (error messages may differ)"
+  }
+}

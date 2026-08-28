@@ -18,6 +18,7 @@ from run_suite import (
     event_metrics,
     llm_secret_for_harness,
     request_json,
+    resolve_curated_agent_settings,
     resolve_profile_ids,
     set_ledger_context,
     wait_for_terminal,
@@ -35,28 +36,35 @@ def message(turn: int) -> str:
     )
 
 
-def create_conversation(profile_id: str, harness: str, workspace: Path) -> str:
+def create_conversation(
+    profile_id: str | None,
+    agent_settings: dict | None,
+    harness: str,
+    workspace: Path,
+) -> str:
     key = KEY_FILE.read_text(encoding="utf-8").strip()
+    payload = {
+        "workspace": {"kind": "LocalWorkspace", "working_dir": str(workspace)},
+        "initial_message": {
+            "role": "user",
+            "content": [{"type": "text", "text": message(1)}],
+            "run": True,
+        },
+        "confirmation_policy": {"kind": "NeverConfirm"},
+        "max_iterations": 20,
+        "stuck_detection": True,
+        "autotitle": False,
+        "worktree": False,
+        "secrets": {"LLM_API_KEY": llm_secret_for_harness(harness, key)},
+    }
+    if agent_settings is None:
+        payload["agent_profile_id"] = profile_id
+    else:
+        payload["agent_settings"] = agent_settings
     record = request_json(
         "POST",
         "/api/conversations",
-        {
-            "workspace": {"kind": "LocalWorkspace", "working_dir": str(workspace)},
-            "agent_profile_id": profile_id,
-            "initial_message": {
-                "role": "user",
-                "content": [{"type": "text", "text": message(1)}],
-                "run": True,
-            },
-            "confirmation_policy": {"kind": "NeverConfirm"},
-            "max_iterations": 20,
-            "stuck_detection": True,
-            "autotitle": False,
-            "worktree": False,
-            "secrets": {
-                "LLM_API_KEY": llm_secret_for_harness(harness, key)
-            },
-        },
+        payload,
     )
     return record["id"]
 
@@ -81,20 +89,38 @@ def main() -> int:
         "--harness", action="append",
         choices=(
             "openhands", "openhands-sonnet", "pi", "pi-sonnet",
-            "opencode", "opencode-sonnet",
+            "opencode", "opencode-sonnet", "openhands-sonnet46", "pi-sonnet46",
         )
+    )
+    parser.add_argument(
+        "--skill-context",
+        choices=("profile-default", "canvas-curated"),
+        default="profile-default",
     )
     args = parser.parse_args()
     harnesses = tuple(args.harness or ("openhands", "pi", "opencode"))
-    profiles = resolve_profile_ids(harnesses)
-    results = {"run_id": args.run_id, "turns": 3, "harnesses": {}}
+    if args.skill_context == "canvas-curated":
+        profiles: dict[str, str] = {}
+        settings = resolve_curated_agent_settings(harnesses)
+    else:
+        profiles = resolve_profile_ids(harnesses)
+        settings = {}
+    results = {
+        "run_id": args.run_id,
+        "turns": 3,
+        "skill_context": args.skill_context,
+        "harnesses": {},
+    }
     for harness in harnesses:
         with tempfile.TemporaryDirectory(prefix=f"odsc-c2-{harness}-") as temp_dir:
             workspace = Path(temp_dir)
             turns = []
             set_ledger_context(args.ledger_proxy_url, harness, run_id=args.run_id, task_id="C2", phase="turn-1")
             started = datetime.now().astimezone().isoformat()
-            conversation_id = create_conversation(profiles[harness], harness, workspace)
+            agent_settings = settings.get(harness)
+            conversation_id = create_conversation(
+                profiles.get(harness), agent_settings, harness, workspace
+            )
             wait_for_terminal({harness: conversation_id}, 300)
             turns.append({"turn": 1, "submitted_at": started, "terminal_at": datetime.now().astimezone().isoformat()})
             for turn in (2, 3):
@@ -107,6 +133,13 @@ def main() -> int:
             results["harnesses"][harness] = {
                 "conversation_id": conversation_id,
                 "model": HARNESS_MODELS[harness],
+                "skill_names": [
+                    skill.get("name")
+                    for skill in (agent_settings or {}).get("agent_context", {}).get("skills", [])
+                    if isinstance(skill, dict)
+                ],
+                "enable_sub_agents": (agent_settings or {}).get("enable_sub_agents"),
+                "agent_kind": (agent_settings or {}).get("agent_kind"),
                 "turns": turns,
                 "trace": event_metrics(events, harness, workspace),
             }

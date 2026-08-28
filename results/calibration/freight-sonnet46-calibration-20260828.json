@@ -1,0 +1,207 @@
+{
+  "run_id": "freight-sonnet46-calibration-20260828",
+  "turns": 3,
+  "skill_context": "canvas-curated",
+  "harnesses": {
+    "openhands-sonnet46": {
+      "conversation_id": "dad3c80c-ecd7-40de-83cf-dbaf535922bd",
+      "model": "openhands/claude-sonnet-4-6",
+      "skill_names": [
+        "add-skill",
+        "agent-canvas-environment",
+        "agent-memory",
+        "agent-sdk-builder",
+        "code-review",
+        "docker",
+        "github",
+        "openhands-api",
+        "openhands-automation",
+        "openhands-sdk",
+        "skill-creator"
+      ],
+      "enable_sub_agents": false,
+      "agent_kind": "openhands",
+      "turns": [
+        {
+          "turn": 1,
+          "submitted_at": "2026-08-28T17:32:42.417888+00:00",
+          "terminal_at": "2026-08-28T17:32:47.772010+00:00"
+        },
+        {
+          "turn": 2,
+          "submitted_at": "2026-08-28T17:32:47.773217+00:00",
+          "terminal_at": "2026-08-28T17:32:52.855249+00:00"
+        },
+        {
+          "turn": 3,
+          "submitted_at": "2026-08-28T17:32:52.856477+00:00",
+          "terminal_at": "2026-08-28T17:32:57.972800+00:00"
+        }
+      ],
+      "trace": {
+        "event_count": 21,
+        "started_at": "2026-08-28T17:32:42.643941",
+        "finished_at": "2026-08-28T17:32:55.139843",
+        "elapsed_seconds": 12.496,
+        "terminal_status": "finished",
+        "tool_calls": 0,
+        "models": [],
+        "visible_system_prompt_chars": 15487,
+        "usage": {
+          "prompt_tokens": 87069,
+          "completion_tokens": 18,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "reasoning_tokens": 0,
+          "accounted_total_tokens": 87087,
+          "source": "agent-server-native-metrics"
+        },
+        "native_metrics": {
+          "usage_id": "default",
+          "metrics": {
+            "model_name": "openhands/claude-sonnet-4-6",
+            "accumulated_cost": 0.261612,
+            "max_budget_per_task": null,
+            "accumulated_token_usage": {
+              "model": "openhands/claude-sonnet-4-6",
+              "prompt_tokens": 87069,
+              "completion_tokens": 18,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 0,
+              "context_window": 1000000,
+              "per_turn_token": 41069,
+              "response_id": ""
+            }
+          },
+          "all_usage_to_metrics": {
+            "default": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 0.261612,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 87069,
+                "completion_tokens": 18,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 0,
+                "context_window": 1000000,
+                "per_turn_token": 41069,
+                "response_id": ""
+              }
+            },
+            "condenser": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 0.0,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 0,
+                "context_window": 0,
+                "per_turn_token": 0,
+                "response_id": ""
+              }
+            }
+          }
+        }
+      }
+    },
+    "pi-sonnet46": {
+      "conversation_id": "a6eed31a-b7fb-4639-913f-f08f5d0651a0",
+      "model": "openhands/claude-sonnet-4-6",
+      "skill_names": [
+        "add-skill",
+        "agent-canvas-environment",
+        "agent-memory",
+        "agent-sdk-builder",
+        "code-review",
+        "docker",
+        "github",
+        "openhands-api",
+        "openhands-automation",
+        "openhands-sdk",
+        "skill-creator"
+      ],
+      "enable_sub_agents": null,
+      "agent_kind": "acp",
+      "turns": [
+        {
+          "turn": 1,
+          "submitted_at": "2026-08-28T17:32:57.986541+00:00",
+          "terminal_at": "2026-08-28T17:33:06.192234+00:00"
+        },
+        {
+          "turn": 2,
+          "submitted_at": "2026-08-28T17:33:06.194203+00:00",
+          "terminal_at": "2026-08-28T17:33:11.283713+00:00"
+        },
+        {
+          "turn": 3,
+          "submitted_at": "2026-08-28T17:33:11.285202+00:00",
+          "terminal_at": "2026-08-28T17:33:16.357520+00:00"
+        }
+      ],
+      "trace": {
+        "event_count": 32,
+        "started_at": "2026-08-28T17:32:58.050203",
+        "finished_at": "2026-08-28T17:33:15.441134",
+        "elapsed_seconds": 17.391,
+        "terminal_status": "finished",
+        "tool_calls": 0,
+        "models": [],
+        "visible_system_prompt_chars": 139,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "reasoning_tokens": 0,
+          "accounted_total_tokens": 0,
+          "source": "agent-server-native-metrics"
+        },
+        "native_metrics": {
+          "usage_id": "default",
+          "metrics": {
+            "model_name": "openhands/claude-sonnet-4-6",
+            "accumulated_cost": 0.0,
+            "max_budget_per_task": null,
+            "accumulated_token_usage": {
+              "model": "openhands/claude-sonnet-4-6",
+              "prompt_tokens": 0,
+              "completion_tokens": 0,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 0,
+              "context_window": 0,
+              "per_turn_token": 0,
+              "response_id": ""
+            }
+          },
+          "all_usage_to_metrics": {
+            "default": {
+              "model_name": "openhands/claude-sonnet-4-6",
+              "accumulated_cost": 0.0,
+              "max_budget_per_task": null,
+              "accumulated_token_usage": {
+                "model": "openhands/claude-sonnet-4-6",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "reasoning_tokens": 0,
+                "context_window": 0,
+                "per_turn_token": 0,
+                "response_id": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

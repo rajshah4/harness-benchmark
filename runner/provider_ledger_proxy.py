@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import re
 import threading
@@ -351,13 +352,49 @@ class ProxyHandler(BaseHTTPRequestHandler):
         response_headers: dict[str, str] = {}
         response_status = 502
         error_type = None
+        downstream_error = None
+        relayed = False
         started = time.monotonic()
         try:
             request = Request(upstream_url, data=body, method="POST", headers=headers)
             with urlopen(request, timeout=self.server.timeout_seconds) as response:
                 response_status = response.status
                 response_headers = dict(response.headers.items())
-                response_body = response.read()
+                # Relay bytes as they arrive. Buffering a long SSE response until
+                # completion changes harness behavior: the downstream LLM client
+                # can hit its idle timeout even while the provider is actively
+                # streaming. We retain a copy only for usage parsing and hashing.
+                self.send_response(response_status)
+                excluded = {
+                    "content-length", "connection", "transfer-encoding", "content-encoding"
+                }
+                for key, value in response_headers.items():
+                    if key.lower() not in excluded:
+                        self.send_header(key, value)
+                self.send_header("Connection", "close")
+                self.end_headers()
+                self.close_connection = True
+                relayed = True
+                chunks: list[bytes] = []
+                downstream_open = True
+                while True:
+                    try:
+                        chunk = response.read1(65536)
+                    except http.client.IncompleteRead as error:
+                        chunk = error.partial
+                        error_type = type(error).__name__
+                    if chunk:
+                        chunks.append(chunk)
+                        if downstream_open:
+                            try:
+                                self.wfile.write(chunk)
+                                self.wfile.flush()
+                            except (BrokenPipeError, ConnectionResetError) as error:
+                                downstream_error = type(error).__name__
+                                downstream_open = False
+                    if error_type == "IncompleteRead" or not chunk:
+                        break
+                response_body = b"".join(chunks)
         except HTTPError as error:
             response_status = error.code
             response_headers = dict(error.headers.items())
@@ -393,17 +430,19 @@ class ProxyHandler(BaseHTTPRequestHandler):
             "cache_observation": cache_observation(raw_usage),
             "error_type": error_type,
             "provider_error": provider_error,
+            "downstream_error": downstream_error,
         }
         self.server.ledger.append(record)
 
-        self.send_response(response_status)
-        excluded = {"content-length", "connection", "transfer-encoding", "content-encoding"}
-        for key, value in response_headers.items():
-            if key.lower() not in excluded:
-                self.send_header(key, value)
-        self.send_header("Content-Length", str(len(response_body)))
-        self.end_headers()
-        self.wfile.write(response_body)
+        if not relayed:
+            self.send_response(response_status)
+            excluded = {"content-length", "connection", "transfer-encoding", "content-encoding"}
+            for key, value in response_headers.items():
+                if key.lower() not in excluded:
+                    self.send_header(key, value)
+            self.send_header("Content-Length", str(len(response_body)))
+            self.end_headers()
+            self.wfile.write(response_body)
 
 
 class LedgerProxyServer(ThreadingHTTPServer):

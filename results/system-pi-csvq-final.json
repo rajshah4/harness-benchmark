@@ -1,0 +1,26 @@
+{
+  "harness": "pi",
+  "task": "csvq",
+  "condition": "system",
+  "model": "GLM-5.2",
+  "score": "100.0%",
+  "cases_passed": 49,
+  "cases_total": 49,
+  "weighted_passed": 84,
+  "weighted_total": 84,
+  "result": "PASS",
+  "comparison_to_single_agent": "+3.6 points (96.4% -> 100.0%)",
+  "sandbox_id": "65FxVotgZQpm4jWwc4Hgrd",
+  "implementer_conversation": "553b6ae9f52d41ef886613d745d28c63",
+  "validator_conversation": "ab456297c14e4be7a9f9a94f71429028",
+  "grading_conversation": "a0d54530a0534d7ba5ebce94ad9694e6",
+  "notes": [
+    "PI validator probed oracle extensively and BUILT the instrument file (unlike OH validator which needed retry)",
+    "PI instrument had 72 cases (vs OH's 100), found 10 failures in initial candidate",
+    "Failures included: help_flag, help_short, help_command exit codes, select_no_args, filter_regex_no_match, filter_invalid_op, sort_numeric_short_r, sort_price_reverse, join_self",
+    "Orchestrator sent behavioral feedback to implementer (case IDs + mismatch type only)",
+    "Implementer fixed all 10 issues in one round",
+    "PI implementer was much faster: 6.6 min vs OH's ~60 min",
+    "System condition reached 100% via multi-agent coordination"
+  ]
+}

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Freight Control Tower</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<!-- Login screen -->
+<div id="login-screen">
+  <div class="login-card">
+    <p class="eyebrow">Network operations</p>
+    <h1>Freight Control Tower</h1>
+    <p class="subtitle">Enter your bearer token to access the dashboard.</p>
+    <form id="login-form" novalidate>
+      <label for="token-input">Bearer token</label>
+      <input id="token-input" type="password" autocomplete="current-password"
+             placeholder="your-secret-token" required>
+      <button type="submit">Sign in</button>
+      <p id="login-error" class="error" role="alert" hidden></p>
+    </form>
+  </div>
+</div>
+
+<!-- Main dashboard (hidden until signed in) -->
+<div id="app" hidden>
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <p class="eyebrow">Control Tower</p>
+    </div>
+    <ul role="list">
+      <li><button class="nav-btn active" data-tab="shipments">Shipments</button></li>
+      <li><button class="nav-btn" data-tab="exceptions">Exceptions</button></li>
+      <li><button class="nav-btn" data-tab="audit">Audit</button></li>
+      <li><button class="nav-btn" data-tab="deliveries">Deliveries</button></li>
+    </ul>
+    <div class="sidebar-footer">
+      <button id="sign-out-btn" class="btn-ghost">Sign out</button>
+    </div>
+  </nav>
+
+  <main class="content">
+    <!-- Shipments tab -->
+    <section id="tab-shipments" class="tab">
+      <div class="tab-header">
+        <h2>Shipments</h2>
+        <div class="filters">
+          <select id="shipment-status-filter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="created">Created</option>
+            <option value="in_transit">In transit</option>
+            <option value="delayed">Delayed</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button id="refresh-shipments" class="btn-primary">Refresh</button>
+        </div>
+      </div>
+      <p id="shipments-status" class="status-msg" role="status"></p>
+      <div id="shipments-list" class="card-grid"></div>
+    </section>
+
+    <!-- Exceptions tab -->
+    <section id="tab-exceptions" class="tab" hidden>
+      <div class="tab-header">
+        <h2>Exceptions</h2>
+        <div class="filters">
+          <select id="exc-status-filter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="open">Open</option>
+            <option value="acknowledged">Acknowledged</option>
+            <option value="resolved">Resolved</option>
+          </select>
+          <select id="exc-severity-filter" aria-label="Filter by severity">
+            <option value="">All severities</option>
+            <option value="P1">P1</option>
+            <option value="P2">P2</option>
+            <option value="P3">P3</option>
+          </select>
+          <input id="exc-assignee-filter" placeholder="Assignee" type="text" aria-label="Filter by assignee">
+          <button id="refresh-exceptions" class="btn-primary">Refresh</button>
+        </div>
+      </div>
+      <p id="exceptions-status" class="status-msg" role="status"></p>
+      <div id="exceptions-list"></div>
+      <!-- Inline mutation panel -->
+      <dialog id="mutate-dialog" aria-labelledby="mutate-dialog-title">
+        <form id="mutate-form" method="dialog">
+          <h3 id="mutate-dialog-title">Update exception</h3>
+          <input type="hidden" id="mutate-exc-id">
+          <input type="hidden" id="mutate-exc-version">
+          <div id="mutate-fields"></div>
+          <p id="mutate-error" class="error" role="alert" hidden></p>
+          <div class="dialog-actions">
+            <button type="submit" class="btn-primary" id="mutate-submit">Save</button>
+            <button type="button" id="mutate-cancel" class="btn-ghost">Cancel</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
+
+    <!-- Audit tab -->
+    <section id="tab-audit" class="tab" hidden>
+      <div class="tab-header">
+        <h2>Audit trail</h2>
+        <div class="filters">
+          <select id="audit-type-filter" aria-label="Filter by entity type">
+            <option value="">All types</option>
+            <option value="shipment">Shipment</option>
+            <option value="exception">Exception</option>
+            <option value="tenant">Tenant</option>
+            <option value="delivery">Delivery</option>
+          </select>
+          <button id="refresh-audit" class="btn-primary">Refresh</button>
+        </div>
+      </div>
+      <p id="audit-status" class="status-msg" role="status"></p>
+      <table id="audit-table" aria-label="Audit entries">
+        <thead>
+          <tr>
+            <th>Time</th><th>Actor</th><th>Action</th><th>Type</th><th>Entity</th>
+          </tr>
+        </thead>
+        <tbody id="audit-body"></tbody>
+      </table>
+    </section>
+
+    <!-- Deliveries tab -->
+    <section id="tab-deliveries" class="tab" hidden>
+      <div class="tab-header">
+        <h2>Outbox deliveries</h2>
+        <div class="filters">
+          <select id="del-status-filter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="claimed">Claimed</option>
+            <option value="delivered">Delivered</option>
+            <option value="failed">Failed</option>
+            <option value="dead">Dead</option>
+          </select>
+          <button id="refresh-deliveries" class="btn-primary">Refresh</button>
+        </div>
+      </div>
+      <p id="deliveries-status" class="status-msg" role="status"></p>
+      <table id="deliveries-table" aria-label="Deliveries">
+        <thead>
+          <tr>
+            <th>ID</th><th>Event</th><th>Status</th><th>Attempts</th><th>Last error</th>
+          </tr>
+        </thead>
+        <tbody id="deliveries-body"></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

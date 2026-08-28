@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Incident Operations Center</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div id="incident-app" data-testid="incident-app">
+      <header class="app-header">
+        <div class="header-content">
+          <h1>⚡ Incident Ops</h1>
+          <button id="refresh-btn" class="btn btn-sm btn-ghost" title="Refresh">↻ Refresh</button>
+        </div>
+      </header>
+
+      <div class="app-body">
+        <!-- Left: Summary + List -->
+        <aside class="sidebar">
+          <!-- Summary -->
+          <section class="summary-card" data-testid="summary" id="summary">
+            <h2>Summary</h2>
+            <div class="summary-grid" id="summary-grid">
+              <div class="summary-item"><span class="count" id="sum-total">0</span><span class="label">Total</span></div>
+              <div class="summary-item open"><span class="count" id="sum-open">0</span><span class="label">Open</span></div>
+              <div class="summary-item ack"><span class="count" id="sum-ack">0</span><span class="label">Ack</span></div>
+              <div class="summary-item resolved"><span class="count" id="sum-resolved">0</span><span class="label">Resolved</span></div>
+            </div>
+            <div class="severity-counts" id="severity-counts"></div>
+          </section>
+
+          <!-- Filters -->
+          <section class="filters-card">
+            <h2>Filters</h2>
+            <div class="filter-row">
+              <label for="status-filter" class="filter-label">Status</label>
+              <select id="status-filter" data-testid="status-filter" class="filter-select">
+                <option value="">All</option>
+                <option value="open">Open</option>
+                <option value="acknowledged">Acknowledged</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="filter-row">
+              <label for="severity-filter" class="filter-label">Severity</label>
+              <select id="severity-filter" data-testid="severity-filter" class="filter-select">
+                <option value="">All</option>
+                <option value="P1">P1</option>
+                <option value="P2">P2</option>
+                <option value="P3">P3</option>
+                <option value="P4">P4</option>
+              </select>
+            </div>
+            <div class="filter-row">
+              <label for="owner-filter" class="filter-label">Owner</label>
+              <input type="text" id="owner-filter" class="filter-input" placeholder="Filter by owner">
+            </div>
+          </section>
+
+          <!-- Incident list -->
+          <section class="list-card" data-testid="incident-list" id="incident-list">
+            <h2>Incidents</h2>
+            <div id="incident-list-body"></div>
+          </section>
+        </aside>
+
+        <!-- Right: Detail -->
+        <main class="detail-panel" id="detail-panel">
+          <div class="empty-state" id="empty-state">
+            <div class="empty-icon">🔍</div>
+            <p>Select an incident to view details</p>
+          </div>
+
+          <article class="incident-detail" data-testid="incident-detail" id="incident-detail" hidden>
+            <div class="detail-header">
+              <div class="detail-title-row">
+                <span class="sev-badge" id="detail-sev"></span>
+                <h2 id="detail-title"></h2>
+              </div>
+              <div class="detail-meta">
+                <span class="status-chip" id="detail-status"></span>
+                <span class="meta-item">ID: <code id="detail-id"></code></span>
+                <span class="meta-item">v<span id="detail-version"></span></span>
+                <span class="meta-item">Alerts: <span id="detail-alerts"></span></span>
+              </div>
+              <div class="detail-times">
+                <span class="meta-item">Created: <span id="detail-created"></span></span>
+                <span class="meta-item">Updated: <span id="detail-updated"></span></span>
+                <span class="meta-item">SLA: <span id="detail-sla"></span></span>
+              </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback-bar" data-testid="feedback" id="feedback" role="status"></div>
+
+            <!-- Actions -->
+            <div class="actions-card" id="actions-card">
+              <h3>Actions</h3>
+              <div class="actions-row">
+                <div class="owner-group">
+                  <label for="owner-input" class="action-label">Owner</label>
+                  <input type="text" id="owner-input" data-testid="owner-input" class="owner-input" placeholder="Assign owner">
+                  <button id="assign-btn" class="btn btn-primary">Assign</button>
+                </div>
+                <div class="status-actions">
+                  <button id="ack-btn" data-testid="acknowledge-action" class="btn btn-warning">Acknowledge</button>
+                  <button id="resolve-btn" data-testid="resolve-action" class="btn btn-success">Resolve</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline-card" data-testid="timeline" id="timeline">
+              <h3>Audit Timeline</h3>
+              <ol class="timeline-list" id="timeline-list"></ol>
+            </div>
+          </article>
+        </main>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

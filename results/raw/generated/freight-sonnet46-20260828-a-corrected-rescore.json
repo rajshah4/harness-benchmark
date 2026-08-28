@@ -1,0 +1,21 @@
+{
+  "run_id": "freight-sonnet46-20260828-a",
+  "source_result": "freight-sonnet46-20260828-a.json",
+  "rescore_reason": "The run-time verifier did not call the explicit init_schema path permitted by the public task, and its concurrent-idempotency audit assertion assumed one audit row per semantic ingest. Rescoring uses the same immutable candidate workspaces after correcting only those verifier assumptions and a zero-delay SLA value not required by the contract.",
+  "public_task_sha256": "8850f23b58f7bd455e1b863b6fa58d227c0650f29f433cef6cc1502ecaf93295",
+  "corrected_verifier_sha256": "0aa5470c70420bf63f387fe85222f6d4b446d4decec35c1c8425de851cb40d0d",
+  "scores": {
+    "openhands-single": {"passed": 6, "total": 9},
+    "pi-single": {"passed": 4, "total": 9},
+    "openhands-system": {
+      "round_0": {"passed": 5, "total": 9},
+      "round_1": {"passed": 6, "total": 9},
+      "round_2_final": {"passed": 6, "total": 9}
+    }
+  },
+  "provider_accounting": {
+    "publishable_complete_accounting": false,
+    "incident": "One openhands-system-implementer response ended with IncompleteRead after HTTP 200 and has a response id but no final usage object.",
+    "treatment": "Single-agent totals are complete. System model calls and tokens are lower bounds; the missing call is retained as a reliability/accounting incident and is not estimated."
+  }
+}

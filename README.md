@@ -4,6 +4,8 @@ This repository contains a reproducible comparison of coding-agent harnesses. Th
 
 The primary result is not a universal leaderboard. It is a demonstration that harness design changes correctness, time, model calls, context size, cache use, and cost even when the underlying model is identical.
 
+See [`BENCHMARK_RESULTS.md`](BENCHMARK_RESULTS.md) for the consolidated single-agent and multi-agent findings, including the CSVQ and freight control tower experiments.
+
 ## Results at a glance
 
 All three harnesses used GLM-5.2 on a clean AWS instance.
@@ -143,6 +145,7 @@ failures are in the
 ## What is here
 
 - [`METHODOLOGY.md`](METHODOLOGY.md): experimental controls, token definitions, limitations, and reproduction procedure.
+- [`BENCHMARK_RESULTS.md`](BENCHMARK_RESULTS.md): consolidated harness × agent-architecture results.
 - [`REPLICATION-CAVEATS.md`](REPLICATION-CAVEATS.md): practical failure modes and checks for reproducing the benchmark.
 - [`benchmark/`](benchmark/): prompts, starting repositories, and external verifiers.
 - [`runner/`](runner/): Agent Canvas runner, provider-boundary ledger, calibration checks, and tests.

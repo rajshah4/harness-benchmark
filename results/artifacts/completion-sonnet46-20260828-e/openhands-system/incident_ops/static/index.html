@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Incident Operations Center</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div data-testid="incident-app" id="app">
+      <header class="top-bar">
+        <div class="top-bar-inner">
+          <div class="brand">
+            <span class="eyebrow">Operations</span>
+            <h1>Incident Center</h1>
+          </div>
+          <button class="btn-secondary" id="refresh-btn" aria-label="Refresh">&#8635; Refresh</button>
+        </div>
+      </header>
+
+      <div class="page-body">
+        <!-- Summary strip -->
+        <section data-testid="summary" id="summary" class="summary-strip" aria-label="Summary">
+          <div class="summary-card" id="summary-total"><span class="count">0</span><span class="label">Total</span></div>
+          <div class="summary-card open-card" id="summary-open"><span class="count">0</span><span class="label">Open</span></div>
+          <div class="summary-card ack-card" id="summary-acked"><span class="count">0</span><span class="label">Acknowledged</span></div>
+          <div class="summary-card resolved-card" id="summary-resolved"><span class="count">0</span><span class="label">Resolved</span></div>
+          <div class="summary-card p1-card" id="summary-p1"><span class="count">0</span><span class="label">P1</span></div>
+          <div class="summary-card p2-card" id="summary-p2"><span class="count">0</span><span class="label">P2</span></div>
+          <div class="summary-card p3-card" id="summary-p3"><span class="count">0</span><span class="label">P3</span></div>
+          <div class="summary-card p4-card" id="summary-p4"><span class="count">0</span><span class="label">P4</span></div>
+        </section>
+
+        <!-- Filters -->
+        <section class="filters" aria-label="Filters">
+          <label class="filter-label">
+            Status
+            <select data-testid="status-filter" id="status-filter">
+              <option value="">All</option>
+              <option value="open">Open</option>
+              <option value="acknowledged">Acknowledged</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </label>
+          <label class="filter-label">
+            Severity
+            <select data-testid="severity-filter" id="severity-filter">
+              <option value="">All</option>
+              <option value="P1">P1</option>
+              <option value="P2">P2</option>
+              <option value="P3">P3</option>
+              <option value="P4">P4</option>
+            </select>
+          </label>
+        </section>
+
+        <!-- Feedback bar -->
+        <div data-testid="feedback" id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+        <!-- Main layout: list + detail -->
+        <div class="main-layout">
+          <section class="list-panel" aria-label="Incident list">
+            <div data-testid="incident-list" id="incident-list" class="incident-list">
+              <p class="empty-msg">No incidents match the current filters.</p>
+            </div>
+          </section>
+
+          <section class="detail-panel" aria-label="Incident detail">
+            <div data-testid="incident-detail" id="incident-detail" class="incident-detail hidden">
+              <div class="detail-header">
+                <div>
+                  <span class="sev-badge" id="detail-severity"></span>
+                  <span class="status-badge" id="detail-status"></span>
+                </div>
+                <h2 id="detail-title"></h2>
+                <div class="detail-meta" id="detail-meta"></div>
+              </div>
+
+              <div class="detail-actions">
+                <label class="action-label">
+                  Assign owner
+                  <div class="owner-row">
+                    <input data-testid="owner-input" id="owner-input" type="text" placeholder="operator name">
+                    <button class="btn-primary" id="assign-btn">Assign</button>
+                  </div>
+                </label>
+                <div class="status-actions">
+                  <button data-testid="acknowledge-action" id="ack-btn" class="btn-warn">Acknowledge</button>
+                  <button data-testid="resolve-action" id="resolve-btn" class="btn-resolve">Resolve</button>
+                </div>
+              </div>
+
+              <div class="timeline-section">
+                <h3>Audit timeline</h3>
+                <ol data-testid="timeline" id="timeline" class="timeline" reversed></ol>
+              </div>
+            </div>
+            <div id="detail-placeholder" class="detail-placeholder">
+              <p>Select an incident to view details.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>
+
